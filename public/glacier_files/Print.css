@@ -1,0 +1,108 @@
+﻿html { margin: 0; } 
+body { 
+    margin: 0; 
+    padding: 0; 
+    background-color: transparent !important;
+    background-image: none !important;
+}
+a {
+    text-decoration: none;
+    color: black !important;
+    cursor: default;
+}
+
+#content {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+.Print {
+    display: block !important;
+}
+.HeaderRow {
+    width: auto;
+    float: right;
+}
+.HeaderRange {
+    margin: 0;
+}
+
+/***No Display Items***/
+.noPrint {
+    display: none;
+    visibility:hidden;
+}
+
+/*General Page Items*/
+.HiddenSkipToMain,
+.DisclaimerContainer,
+.ContentInfo,
+.HeaderDiv,
+.ViewRangeBar,
+.HeaderHelp,
+.pager,
+.ui-widget-overlay
+ {display: none;}
+
+/*General Menus and Menu Items*/
+#sb-container,
+#navigationDiv,
+div.menuBar,
+div.subMenuBar,
+div.menuBar a.menuButton,
+div.subMenuBar a.menuButton,
+div.menuBar,
+div.subMenuBar,
+#topMenu,
+#bottomMenu,
+div.menuBar a.menuButton,
+div.menuBar a.menuButtonActive,
+div.menuBar a.menuButtonActiveSub,
+div.subMenuBar a.menuButton,
+div.subMenuBar a.menuButtonActive,
+div.menuBar a.menuButtonActive,
+div.menuBar a.menuButtonActiveSub,
+div.subMenuBar a.menuButtonActive,
+div.menuBar a.menuButton:hover,
+div.subMenuBar a.menuButton:hover,
+div.menuBar#topMenu a.menuButtonActive,
+div.menuBar#topMenu a.menuButtonActive:hover,
+div.menuBar a.menuButtonActiveSub,
+div.menuBar a.menuButtonActiveSub:hover,
+div.subMenuBar a.menuButtonActive,
+div.subMenuBar a.menuButtonActive:hover,
+div.menuBar#bottomMenu a.menuButtonActive,
+div.menuBar#bottomMenu a.menuButtonActive:hover 
+{display: none;}
+/***End No Display Items***/
+
+/***Master Pages***/
+.MainContent_Container {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/***End Master Pages***/
+
+/***Transaction Page***/
+#datagrid {
+    padding: 0 !important;
+}
+#datagrid tr td {
+    font-size: 11px !important;
+    line-height: normal !important;
+}
+#datagrid .th a {
+    background-color: transparent !important;
+}
+.TransactionsDataGrid {
+    border: 0px !important;
+}
+.TransactionsDataGrid tr {
+    border: 1px solid black !important;
+}
+.TransactionsDataGrid tr td,
+.TransactionsDataGrid tr th {
+    padding: 0px 2px !important;
+    border: 1px solid black !important;
+}
+/***End Transaction Page***/

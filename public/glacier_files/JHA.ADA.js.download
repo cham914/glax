@@ -1,0 +1,310 @@
+﻿/// <reference path="jquery-1.9.1.js" />
+/// <reference path="JHA.Core.js" />
+jQuery.namespace('JHA.ADA');
+//Global variables
+var currentFocusedControl; //Used to keep track of the currently selected control
+var tabIndex;
+var liveChatTimer;
+var liveChatTimesRun = 0;
+//Set Focus
+JHA.ADA.SetFocus = function () {
+    if (currentFocusedControl != null && currentFocusedControl.length > 0) {
+        currentFocusedControl.focus();
+        currentFocusedControl = null;
+    }
+};
+//Self executing function to run every time on every page.
+$(function () {
+    BindSkipToMainContentHandler();
+    BindHelpLinkEnterPressedHandler();
+    SetTabIndexValues();
+    CheckForRefreshNotification();
+    ApplyAltTextIfMissing();
+    FillEmptyTableHeaders();
+    FlushAlertArrays();
+    StartLiveChatTimer();
+});
+//ArrayFlushOnAlerts
+function FlushAlertArrays() {
+    ADAInvalidCtrls = [];
+    ADAValidationMessages = [];
+    ADAAlertMessages = [];
+}
+//Global apply altText if missing
+function ApplyAltTextIfMissing() {
+    $('img').each(function () {
+        if ($('img').is(':visible')) {
+            if ($(this).attr('alt') == '') {
+                $(this).attr('alt', 'image');
+            }
+        }
+    });
+}
+// Search for empty table headers and put in default text
+// Not the best way to do this, but it works.
+function FillEmptyTableHeaders() {
+    $("th").each(function (index) {
+        if ($(this).html().length === 0 || $(this).html() === "&nbsp;") {
+            $(this).html('<span class="AudibleOnly">blank</span>');
+        }
+    });
+}
+// Start LiveChat timer
+function StartLiveChatTimer() {
+    liveChatTimer = setInterval(JHA.ADA.CheckAndFixLiveChat, 500);
+}
+//Function to bind click event to skip to Main Content
+function BindSkipToMainContentHandler() {
+    $("a[href^='#ada_maincontent']").click(function () {
+        var mainContentCtrl = $(this).attr('href');
+        var mainContentInner = $(mainContentCtrl + ' .MainContent');
+        if (mainContentInner && mainContentInner.length > 0) {
+            $(mainContentInner).effect('highlight', {}, 3000);
+        }
+        // check to see if page has h1 title, if so set focus 
+        // and the reader will announce the <h1> content as the main content
+        var header = $(mainContentCtrl).find('h1');
+        if (header && header.length > 0) {
+            $(header).focus();
+        } else {
+            $(mainContentCtrl + ' :input:enabled:visible:first').focus();
+        }
+        return false;
+    });
+}
+//Function to explicitly set tabindex
+function SetTabIndexValues() {
+    tabIndex = 2;
+
+    //This is a fix for BoundColumn Template Headers that are sortable
+    $('tr.th td a').each(function () {
+        if (!$(this).is('[ToggleTabIndex]')) {
+            // ToggleTabIndex attribute does not exist - add it
+            $(this).attr('ToggleTabIndex', 'true');
+        }
+    });
+
+    $('tr.th a').each(function () {
+        if (!$(this).is('[ToggleTabIndex]')) {
+            // ToggleTabIndex attribute does not exist - add it
+            $(this).attr('ToggleTabIndex', 'true');
+        }
+    });
+    // This is a fix for grid Pager that will assign a tab index for the specific page
+    $('tr.pager td a').each(function () {
+        if (!$(this).is('[ToggleTabIndex]')) {
+            // ToggleTabIndex attribute does not exist - add it
+            var pageLabel = "Page " + $(this).text();
+            $(this).attr('ToggleTabIndex', 'true');
+            $(this).attr("aria-label", pageLabel);
+        }
+    });
+
+    $("*[ToggleTabIndex^='true']").each(function () {
+        $(this).attr('tabIndex', tabIndex);
+        tabIndex++;
+    });
+}
+//AutoSet tabbing and notifications on load
+function pageLoad(sender, e) {
+    SetTabIndexValues();
+    CheckForRefreshNotification();
+}
+//Table Refresh
+function CheckForRefreshNotification() {
+    ADAAlertMessages = [];
+    if ($('#ADA_AlertMsg') && $('#ADA_AlertMsg').length == 0)
+        return;
+    if ($('#ADA_AlertMsg').html().length > 0)
+        return;
+    if ($('.ErrorInfoMsg').is(':visible')) {
+        ADAAlertMessages.push($('.ErrorInfoMsg').text());
+    }
+    if ($('.InfoMsg').is(':visible')) {
+        ADAAlertMessages.push($('.InfoMsg').text());
+    }
+    if ($('#hdnNotification') && $('#hdnNotification').length > 0) {
+        var alertMsg = $('#hdnNotification').val();
+        if (alertMsg.length > 0) {
+            $('#hdnNotification').val('');
+            ADAAlertMessages.push(alertMsg);
+        }
+    }
+    if ($('.adaAlert') && $('.adaAlert').length > 0) {
+        var adaAlert = $('.adaAlert').val();
+        if (adaAlert.length > 0) {
+            $('.adaAlert').val('');
+            ADAAlertMessages.push(adaAlert);
+        }
+    }
+    $('.adaAlert').each(function () {
+        var msg = $(this).text();
+        ADAAlertMessages.push(msg);
+    });
+    $('img[alt=Alert]').each(function () {
+        var msg = $(this).parent().text();
+        ADAAlertMessages.push(msg);
+    });
+    //tables
+    $('table[adaalert]').each(function () {
+        var msg = $(this).attr('adaalert');
+        $('table[adaalert]').removeAttr("adaalert");
+        ADAAlertMessages = [];
+        ADAAlertMessages.push(msg);
+    });
+    $('#hdnWatermarkAlert').each(function () {
+        var msg = $(this).attr('value');
+        ADAAlertMessages = [];
+        ADAAlertMessages.push(msg);
+    });
+    JHA.ADA.DisplayADAAlert();
+}
+
+//Function to bind an event handler to Help Links
+function BindHelpLinkEnterPressedHandler() {
+    $('.HelpLink').each(function () {
+        $(this).ClickOnEnterPressed();
+    });
+}
+
+//Plugin to perform a click action when the User presses Enter on an element
+$.fn.ClickOnEnterPressed = function () {
+    $(this).keydown(function (e) {
+        var ev = e || event;
+        if (ev.keyCode == 13) {
+            $(this).focusout(function () {
+                try { $(this).qtip('destroy'); } catch (e) { }
+            });
+            $(this).click();
+            return false;
+        }
+        // Added so Tab key will close the help alert. GBD
+        if (ev.keyCode === 9 || ev.keyCode === 27) {
+            try { $(this).qtip('destroy'); } catch (e) { }
+            return true;
+        }
+    });
+};
+
+//Validation Related
+var ADAInvalidCtrls = [];
+var ADAValidationMessages = [];
+var ADAAlertMessages = [];
+
+JHA.ADA.ResetInvalidFormFieldsADA = function () {
+    $("*[aria-invalid^='true']").each(function () {
+        $(this).removeAttr('aria-invalid');
+        $(this).removeAttr('aria-label');
+    });
+    ADAInvalidCtrls = [];
+    ADAValidationMessages = [];
+    $('#ADA_AlertMsg').html('');
+};
+
+JHA.ADA.DisplayADAValidationErrors = function () {
+    $.each(ADAInvalidCtrls, function (index, item) {
+        $(item).attr('aria-invalid', 'true');
+        $(item).attr('aria-label', ADAValidationMessages[index]);
+    });
+    var fullErrorList = '';
+    $.each(ADAValidationMessages, function (index, msg) {
+        fullErrorList += ' ' + msg;
+    });
+    setTimeout(function () {
+        $('#ADA_AlertMsg').attr('role', 'alert');
+        $('#ADA_AlertDiv').css('clip', 'auto');
+        $('#ADA_AlertMsg').html(fullErrorList).hide().show();
+    }, 500);
+};
+//Information Alerts -- LiveFooterRegion
+JHA.ADA.DisplayADAAlert = function () {
+    var fullMsgList = '';
+    if (ADAAlertMessages.length == 0)
+        return;
+    $.each(ADAAlertMessages, function (index, msg) {
+        fullMsgList += ' ' + msg;
+    });
+    setTimeout(function () {
+        $('#ADA_AlertMsg').attr('role', 'alert');
+        $('#ADA_AlertDiv').css('clip', 'auto');
+        // JLF FND-6583 change html to text
+        $('#ADA_AlertMsg').text(fullMsgList.replace(/(<([^>]+)>)/ig, "")).hide().show();
+    }, 500);
+};
+
+//Hide specified div if said div is empty
+JHA.ADA.HideEmptyDiv = function (elementRef) {
+    if (($(elementRef).length < 1) || ($(elementRef).height() > 1)) {
+        return;
+    }
+    $(elementRef).hide();
+};
+
+
+var focusableElementsString = "a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]";
+var focusedElementBeforeModal;
+
+JHA.ADA.MakeModalAccessible = function (modal, closeFn) {
+    /* Contain focus inside modal */
+    $(modal).keydown(function (event) {
+        switch (event.which) {
+            case 9: /* [TAB] or [SHIFT]+[TAB] */
+                /* get list of all children elements in given object */
+                var o = $(modal).find('*');
+
+                /* get list of focusable items */
+                var focusableItems = o.filter(focusableElementsString).filter(':visible');
+                var numberOfFocusableItems = focusableItems.length;
+
+                var focusedItem = $(':focus');
+                /* get the index of the currently focused item */
+                var focusedItemIndex = focusableItems.index(focusedItem);
+
+                if (event.shiftKey) { /* [TAB]+[SHIFT] Tab backwards */
+                    /* If focused on first item and user preses back-tab, go to the last focusable item */
+                    if (focusedItemIndex == 0) {
+                        focusableItems.get(numberOfFocusableItems - 1).focus();
+                        event.preventDefault();
+                    }
+
+                } else { /* [TAB] Tab forwards */
+                    /* If focused on the last item and user preses tab, go to the first focusable item */
+                    if (focusedItemIndex == numberOfFocusableItems - 1) {
+                        var tmp = focusableItems.get(0);
+                        $(tmp).focus();
+                        event.preventDefault();
+                    }
+                }
+                break;
+
+            case 27: /* [ESCAPE] */
+                event.preventDefault();
+                /* If a close function was provided, call the close function */
+                if (closeFn != null)
+                    closeFn();
+                break;
+        }
+    });
+};
+
+JHA.ADA.SetInitialModalFocus = function (obj) {
+    // get list of all children elements in given object
+    var o = obj.find('*');
+
+    // set focus to first focusable item
+    o.filter(focusableElementsString).filter(':visible').first().focus();
+};
+// Search for LiveChat image and apply alt tag and tab index
+JHA.ADA.CheckAndFixLiveChat = function () {
+    liveChatTimesRun += 1;
+    if (liveChatTimesRun === 30) {
+        clearInterval(liveChatTimer);
+    }
+    if ($("img.LPMimage").length > 0) {
+        clearInterval(liveChatTimer);
+        $("img.LPMimage").attr("alt", "Live Support Chat");
+        $("img.LPMimage").attr("ToggleTabIndex", "true");
+        $("img.LPMimage").attr("aria-label", "Live Support Chat button select to chat with a support rep");
+        SetTabIndexValues();
+    }
+};

@@ -1,0 +1,35 @@
+﻿jQuery.namespace('JHA.NetTeller.GovernmentLogo');
+
+GovernmentLogo = new function () {
+
+    var navigate = function (url) {
+            window.open(url, '_blank', 'menubar=0,resizeable=1,scrollbars=1,width=800,height=600');
+        }
+
+    var confirmNavigate = function (url) {
+        $.ajax({
+                url: document.location.protocol + '//' + document.location.host + document.location.pathname + '/NavWarning',
+                error: function (request, status, error) {
+                    alert('error :' + error);
+                },
+                success: function (data, textstatus, xmlrequest) {
+                    var h = data.d.length + 50;
+                    if (h < 150) {
+                        h = 150;
+                    }
+                    JHA.NetTeller.ShowDivModal({ target: '<div class="govt-logo-confirmation-container" role="dialog" aria-live="assertive" aria-describedby="navFormDesc"><div class="govt-logo-message-container"><p id="navFormDesc" class="HiddenModalDescription">' + data.d + '</p>' + data.d + '</div><br/><div class="button-container"><input type="button" class="ColorButton" value="Cancel" onclick="$(\'.govt-logo-confirmation-container\').remove();return false;"><input type="button" class="ColorButton" value="Continue" onclick="GovernmentLogo.Navigate(\'' + url + '\');$(\'.govt-logo-confirmation-container\').remove();return false;"></div></div>', title: 'Confirmation', width: 300, minWidth: 300, height: h, minHeight: 150 });
+                }
+            });
+
+    }
+
+    //-----------------------------------------------
+    // Public Members
+    //-----------------------------------------------
+    var public = {
+        Navigate: navigate,
+        ConfirmNavigate: confirmNavigate
+};
+
+    return public;
+};

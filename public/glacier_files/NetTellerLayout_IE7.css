@@ -1,0 +1,8 @@
+﻿.account-balances-container .account-balance-cell { text-align: right; padding-top:1px; padding-bottom:2px; padding-right: 25px; overflow-x: hidden;}
+.recent-transactions-container { height: 62px; padding: 5px 25px 5px 10px; }
+.MultiQuickPaymentsDataGrid .PayeeAmountColumn{padding-bottom:1px; padding-top:1px; padding-right:25px; padding-left:5px; width: 85px; }
+.positive-pay-exceptions-container { height: 62px; padding: 5px 25px 5px 10px; overflow: auto; overflow-x: hidden; }
+.wires-xmitted-container { height: 62px; padding: 5px 25px 5px 10px; overflow: auto; overflow-x: hidden; }
+.batches-ach-container { height: 62px; padding: 5px 25px 5px 10px; overflow: auto; overflow-x: hidden; }
+.quickPaymentPayee {width:75px;}
+

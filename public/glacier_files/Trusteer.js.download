@@ -1,0 +1,40 @@
+﻿jQuery.namespace('JHA.NetTeller.Trusteer');
+
+$(document).ready(function () {
+	$("[ID$='-download-button']").on("click", function () { JHA.NetTeller.Trusteer.GetHomeUrl(); });
+});
+
+JHA.NetTeller.Trusteer.IsTrusteer = function () {
+	$.ajax({
+		url: 'Login.aspx/CheckTrusteer',
+		success: function (data, textstatus, xmlrequest) {
+			JHA.NetTeller.Trusteer.CheckTrusteer(data.d);
+		}
+	});
+};
+
+JHA.NetTeller.Trusteer.GetHomeUrl = function () {
+	$.ajax({
+		url: 'Login.aspx/GetHomeUrl',
+		success: function (data, textstatus, xmlrequest) {
+			JHA.NetTeller.Trusteer.NavHome(data.d);
+		}
+	});
+};
+
+JHA.NetTeller.Trusteer.NavHome = function (url) {
+	window.location = url;
+	return false;
+};
+
+JHA.NetTeller.Trusteer.CheckTrusteer = function (snippetID) {
+	if (snippetID.length > 0) {
+		var host = 'www.splash-screen.net';
+		sn = document.createElement('script');
+		sn.setAttribute('async', true);
+		sn.setAttribute('type', 'text/javascript');
+		sn.setAttribute('src', (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//' + host + '/' + snippetID + '/' + 'splash.js');
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(sn, s);
+	}
+};

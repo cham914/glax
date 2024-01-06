@@ -1,0 +1,505 @@
+﻿/*ADA Content*/
+/*These elements are specifically for use in adding accessibility*/
+
+.vAlign-Middle{ vertical-align: middle;}
+
+.pull-left { float: left !important; }
+.pull-right { float: right !important; }
+
+#pagerWrapper ul, #pagerWrapper li, #pagerWrapper a, #pagerWrapper p {
+    _zoom: 1;
+    list-style: none;    
+}
+#pagerWrapper li, #pagerWrapper a {
+    display: inline !important;    
+}
+
+.AudibleOnly {
+    left: -999em;
+    position: absolute;
+}
+
+.SmallUText { font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; text-decoration: underline;padding-left: 2px; }
+.SmallRedUText {font-size: 10px;font-family: Verdana, Arial, Helvetica, sans-serif;color: Red;text-decoration: underline;padding-left: 2px;}
+.NT { font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; text-align: left; white-space: normal; padding-left: 5px;color: #000000 !important; } 
+.TDWrap { font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; white-space: normal; color: #000000 !important;} 
+.BoldTD { font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; white-space: normal; font-weight: bold; color: #000000 !important; }
+.MarketingMessageTD { font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; white-space: normal; }
+.SmallTextTD { font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; }
+.SmallTextTDWrap { font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; white-space: normal; }
+.RightSmallTextTD { font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; text-align: right; }
+.LeftSpacedTD { font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; height: 40px; text-align: left; }
+
+.HiddenElement
+{
+    position: absolute;
+    left: -9999px;
+    z-index: -100;
+}
+
+.HiddenElementNoFocus
+{
+    position: absolute;
+    left: -9999px;
+    z-index: -100;
+}
+
+.screenReaderOnly {
+    border: 0;
+    clip: rect(0,0,0,0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.HiddenSkipToMain { 
+    position: absolute;
+    left: -9999px;
+} 
+
+.HiddenSkipToMain:focus { 
+    position: relative;
+    float: left;
+    left: 0;
+}
+
+table caption {
+    position: absolute;
+    left: -9999px;
+    z-index: -100;
+}
+
+.HiddenElement:focus
+{
+    left: 5px;
+    z-index: 100;
+}
+
+
+.HiddenModalDescription, .HiddenDiv 
+{
+    clip:rect(0px,0px,0px,0px);
+    line-height: 0;
+    opacity: 0;
+    filter: alpha(opacity = 0);
+    position: absolute;
+    width: 0;
+    display: inline;
+}
+
+/*Forms*/
+.split_container {
+    overflow: hidden;
+    line-height: 27px;
+    padding: 10px;
+}
+
+.half {
+    width: 50%;
+}
+
+.left {
+    float: left;
+    text-align: right;
+}
+
+.left_left {
+    float: left;
+    text-align: left;
+}
+
+.right {
+    float: right;
+    text-align: left;
+}
+
+.inputs{
+    width: 220px;
+}
+
+.buttons {
+    text-align: center;
+    padding: 10px;
+}
+
+.split_container label {
+    width: 100%;
+    display: inline-block;
+}
+
+.split_container input, .split_container select {
+    margin: 2px 5px;
+}
+
+.split_container select {
+    height: 22px;
+}
+
+.radioButton label {
+    width: auto;
+}
+
+.radiolist label {
+    margin-right: 5px;  
+}
+
+/*******/
+
+.FormFieldset 
+{
+    border: none;
+}
+
+.NoMargin {
+    margin-left: 0 !important;
+    border: none;
+}
+.GridFieldset fieldset  {
+    margin-top: 10px;
+    border: none;
+}
+
+.ButtonMargin {
+    margin-left: 10px !important;
+}
+
+.FormFieldset div
+{
+    padding-bottom: 2px;
+}
+
+img[class="sortImage"] {
+    border: 0;
+    margin-left: 5px;
+}
+th[class="Centered"] {
+    text-align: center;
+}
+th[class = "TextLeft"] {
+    text-align: left;
+}
+th[class = "TextRight"] {
+    text-align: right;
+}
+
+.FormFieldset div label, .FormFieldset div div label  
+{
+    font-weight: bold;
+    width: 230px;
+    display: inline-block;
+    text-align: right;
+    line-height: 25px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.FormFieldsetdiv1, .FormFieldsetdiv2, .FormFieldsetdiv3 {
+    width: 600px;
+    margin: auto;
+    padding-right: 10px;
+    padding-left: 10px;
+    text-align: left;
+}
+
+.EsiPDFError {
+    color: red;
+    display: inline;
+    font: normal !important;
+    width: auto !important;
+    padding-left: 1px !important;
+}
+    .GridFieldset {
+        padding: 10px;
+    }
+
+.GridLabel {
+    display: block;
+    font-weight: bold; 
+    margin-bottom: 3px;
+    float: none;
+    /*margin-right: 4px;*/ 
+    text-align: right;
+    line-height: 25px;
+}
+
+.GridLabelLeft {
+    display: block;
+    font-weight: bold; 
+    margin-bottom: 3px;
+    float: none;
+    text-align: left;
+    line-height: 25px;
+}
+
+.GridDataLabel 
+{
+    font-weight: normal !important;
+    padding-left: 0 !important;
+    text-align: left !important;
+    line-height: 25px;
+}
+
+.FloatRight {
+    float: right;
+}
+
+.Centered50 {
+    margin-left: auto; 
+    margin-right: auto;
+    width: 50%;
+    text-align: center;
+}
+
+.DoubleTextField {
+    display: inline;
+}
+
+.FormFieldset .ColumnHeader {
+    font-size: 14px;
+}
+
+.GridFieldset .ColumnHeader {
+    font-size: 14px;
+}
+
+.FormFieldset div span, .formSpan, .FormFieldset div div span
+{
+	font-weight: bold;
+    width: 230px;
+    display: inline-block;
+    text-align: right;
+    line-height: 25px;
+    vertical-align: top;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.FormFieldset .radioButton {
+    display: inline !important;
+}
+
+.FormFieldset .radioButton span{
+    display: inline !important;
+}
+
+.FormFieldset .radioButton input {
+    vertical-align: top !important;
+}
+
+.FormFieldset .radioButton label{
+    width: auto !important;
+    line-height: 10px !important;
+}
+
+.DataLabel 
+{
+    font-weight: normal !important;
+    padding-left: 0 !important;
+    text-align: left !important;
+    line-height: 25px;
+}
+
+.FormFieldset div input 
+{
+    vertical-align: middle;
+}
+
+.button-containerADA {
+    width: 100%;
+    padding: 5px 0;
+    text-align: center;
+}
+/* Apply the margins as seen in default */
+.button-containerADA .ColorButton{ margin: 5px 5px 5px 5px; }
+
+/* Custom Text Styles */
+
+.MarketingMessageADA {
+    font-size: 12px; 
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    white-space: normal;
+}
+
+.SpacedBoldADA {
+    font-size: 12px; 
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    height: 40px; 
+    font-weight: bold;
+}
+
+.SmallTextADA {
+     font-size: 10px; 
+     font-family: Verdana, Arial, Helvetica, sans-serif;
+     text-align: center;
+}
+
+.NTADA {
+    font-size: 12px;
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-weight: normal;
+    color:black;
+    text-align: left; 
+    white-space: normal; 
+    padding-left: 5px;
+}
+
+/* End Custom Text Styles */
+
+
+
+/* Grid Styles */
+
+.datagrid, .TransactionsDataGrid {
+    border: 1px solid #E2E2E2;
+}
+
+.datagrid th, .TransactionsDataGrid th {
+    border-right: 1px solid #E2E2E2;
+    padding: 0 10px;
+}
+
+.datagrid tr td, .TransactionsDataGrid tr td {
+    border: none;
+    border-right: 1px solid #E2E2E2;
+}
+
+.TransactionsDataGrid tr .Total {
+    border-right: none;
+}
+
+.datagrid caption, .TransactionsDataGrid caption {
+    height: 0px;
+    position: absolute;
+    left: -1500px;
+}
+
+.datagridFooter {
+    margin: 0px -1px; 
+    padding: 5px 0;
+    border-bottom: 1px solid #E2E2E2; 
+    border-left: 1px solid #E2E2E2; 
+    border-right: 1px solid #E2E2E2; 
+    display: inline-block; 
+    width: 100%; 
+    background-color: #f9f6e9;
+}
+
+.datagridFooterLeftInfo {
+    border-right-style: none; 
+    padding-left: 5px; 
+    float: left;
+}
+
+.dataGridFooterRightInfo {
+    float: right; 
+    padding-right: 5px; 
+    text-align: right; 
+    font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif; 
+    font-size: 13px; 
+    font-weight: bold; 
+    color: #686868;
+}
+ 
+/* End Grid Styles */    
+
+/* Header, Help, ViewRange & TrainStop */
+
+.HeaderRow {width: 100%; display: table; }
+.HeaderDiv { display: table-cell; vertical-align: middle; }
+/* TODO:RCR fix that should have been applied to fix the tabs --- not reverting them to h1's */
+.HeaderDiv h1, .HeaderDiv h2 { margin: auto; background-color: transparent; }
+.HeaderHelp { display: table-cell; vertical-align: middle; min-width: 1px;  }
+.HeaderRange{ float: right; display: table-cell; vertical-align: middle; min-width: 1px; margin-top: 10px; }
+.HeaderTrainStop { float: right; display: table-cell; vertical-align: middle; min-width: 1px; margin-top: 5px; }
+.ViewRangeBar-Container { float:right; padding-right:10px; margin-bottom:3px; }
+.ViewRangeBar span { display: inline;}
+.DataGrid-Container { padding: 10px;}
+
+.TxnsLink
+{
+    margin-bottom: -5px;
+    padding-right: 8px;
+    padding-top: 8px;
+    text-align: right;
+}
+
+.primarySearchLabel {
+    float: left;
+    font-weight: bold;
+    margin-left: 10px;
+    padding: 10px 0;
+    width: 100px;
+}
+
+/* End Header, Help, ViewRange & TrainStop*/
+
+.LoginError {
+    word-wrap: break-word;
+}
+.LoginInfo {
+    word-wrap: break-word;
+}
+.progress-indicator-container{}
+.AnswerPrompt {
+    word-wrap: break-word;
+}
+
+/* hand cursor on clickable input elements */
+input[type=button], input[type=submit], button { cursor: pointer; }
+a:hover, a:active { outline: none; }
+
+/* Coppied from NetTellerLayout: td.SmallTextTDWrap */
+div.SmallTextDIVWrap { font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; white-space: normal; }
+
+.RedBox {
+    -webkit-box-shadow: 0.2px 0.2px 1px 1.5px #FF0000, 0.2px 0.2px 1px 1.5px #FF0000;   
+    -moz-box-shadow: 0.2px 0.2px 1px 1.5px #FF0000, 0.2px 0.2px 1px 1.5px #FF0000;       
+/*    box-shadow: 0.2px 0.2px 1px 1.5px #FF0000, 0.2px 0.2px 1px 1.5px #FF0000;   */
+    border-collapse:separate;
+    padding:0px;    
+    outline: 2px solid red;
+}
+
+.customHr {
+    height: 1px;
+    border: 0 none;
+    background-color:  #000000;
+    background-color:  rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 1px #000000;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.customH2 {
+    font-size: 14px;
+}
+
+div img.RequiredImage {
+    margin-left: -10px;
+}
+/*fixes checkboxes with labels*/
+div .align-input-left input[type=checkbox] {
+    margin-left:-0.5%;
+}
+img.RequiredImage { margin-bottom: 6px;}
+img.ErrorImage { margin-bottom: -2px;}
+
+.options-account-keyboard-instructions {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    border: thin #000 solid;
+    background-color: #fff;
+    z-index: 3;
+    display: none;
+}
+
+.options-account-keyboard-instructions h1 { text-align: center; }
+
+.options-account-keyboard-instructions kbd { font-weight: bolder; }
+
+.asterisk {
+    color: #ff0000;
+}

@@ -1,0 +1,566 @@
+/*  Legacy styles, just in case. These are non-customizable */
+/*----------------------------------------------------------*/
+table.NT {
+	/* width:760px; */
+	padding:0px 0px 0px 0px;
+	margin:0px 0px 0px 0px;
+	border-spacing:0px;
+	border: none;
+}
+table.MediumTable {
+	width:570px;
+	border: none;
+}
+table.SmallTable {
+	width:380px;
+	border: none;
+}
+table.XSmallTable {
+	width:0px;
+	border: none;
+}
+table.XSmallBorderTable {
+	width:0px;
+	border-spacing:1px;
+	border: none;
+}
+table.SmallBorderTable {
+	width:380px;
+	border-spacing:1px;
+	border: none;
+}
+
+table.CalendarTable {
+	width:294px;
+	border:0px;
+}
+table.HelpTable {
+	width:456px;
+	border:0px;
+}
+th.NT {
+	font-size:12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align:left;
+	white-space:nowrap;
+}
+th.RightTH {
+	font-size:12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align:right}
+th.TopTH {
+	font-size:12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	vertical-align : top;
+	text-align:left;
+}
+th.SmallTH {
+	font-size:10px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align:right}
+font.NT {
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+
+td {
+}
+td.NT {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	white-space:nowrap;
+}
+td.TDWrap {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	white-space:normal;
+}
+td.BoldTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-weight:bold;
+}
+td.RightTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:right;
+}
+td.RightBoldTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:right;
+	font-weight:bold;
+}
+td.CenterTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+}
+td.CenterTDNowrap {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+	white-space:nowrap;
+}
+td.CenterBoldTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+	font-weight:bold;
+}
+td.Total {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:right;
+	font-weight:bold;
+	font-style:italic;
+}
+td.TopTD{
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	vertical-align : top;
+}
+td.GreenText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Green;
+}
+td.GreenCenterText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Green;
+	text-Align:center;
+}
+td.SmallGreenText {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Green;
+}
+td.GreenBoldText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Green;
+	font-weight:bold;
+}
+td.YellowText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Yellow;
+}
+td.RedText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Red;
+}
+td.RedCenterText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Red;
+	text-Align:center;
+}
+td.SmallRedText {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Red;
+}
+td.SmallRedUText {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Red;
+	text-decoration:underline;
+}
+td.RedBoldText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Red;
+	font-weight:bold;
+}
+td.BlueText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Blue;
+}
+td.BlueCenterText {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	color:Blue;
+	text-Align:center;
+}
+td.SmallUText {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-decoration:underline;
+}
+td.SmallCenterText, div.SmallCenterText {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+}
+td.SmallTextTD {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+td.SmallTextTDWrap {
+	font-size:10px;
+		font-family:Verdana, Arial, Helvetica, sans-serif;
+	white-space:normal;
+}
+td.RightSmallTextTD {
+	font-size:10px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:right;
+}
+td.LeftSpacedTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	height:40px;
+	text-align:left;
+}
+
+td.SpacedTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	height:40px;
+}
+td.SpacedBoldTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	height:40px;
+	font-weight:bold;
+}
+td.RightSpacedTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	height:40px;
+	text-align:right;
+}
+
+td.AlignedButtonTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+}
+td.ListLinkTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	width:40px;
+	text-align:center;
+}
+td.AmountTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	width:0px;
+	text-align:right;
+}
+td.BlankTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	width:700px;
+}
+td.DescriptionTD {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	white-space:nowrap;
+}
+a.Calendar			{
+	text-align:center;
+	text-decoration: underline;
+	font-size:11px;
+}
+a.Calendar:hover	{
+	text-align:center;
+	text-decoration: underline;
+	font-size:11px;
+}
+a.Calendar:link		{
+	text-align:center;
+	text-decoration: underline;
+	font-size:11px;
+}
+a.Calendar:active	{
+	text-align:center;
+	text-decoration: underline;
+	font-size:11px;
+}
+a.SmallText 		{
+	text-decoration: none;
+	font-weight:bold;
+	font-size:10px;
+}
+a.SmallText:hover   {
+	text-decoration: none;
+	font-weight:bold;
+	font-size:10px;
+}
+a.SmallText:link    {
+	text-decoration: none;
+	font-weight:bold;
+	font-size:10px;
+}
+a.SmallText:active  {
+	text-decoration: none;
+	font-weight:bold;
+	font-size:10px;
+}
+select {
+	font-size:12px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	vertical-align:middle;
+	text-decoration:none;
+	white-space:nowrap;
+}
+td.SmallTextTD 
+{
+	font-size:75%; 
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+div.MainContent_Container, div#contentBlockFooter { 
+	display: block; 
+	margin: 0 10px 0 10px; 
+	padding: 10px 0 10px 0;
+	width: auto; 
+}
+div.MainContent_Container, div.MainContent_Container table {
+	/* hack for IE not rendering tabs on account listing. */
+	position: relative;
+	border-top-style: none;
+}
+
+.MainContentBgColor, .MainContentBgColorCfm, h2
+{
+	background-color: #ffffff; 
+}
+.MainContent { 
+	margin-bottom: 15px;
+	padding: 0px;
+	position: relative;
+    border-top-style: none;
+    padding-top:inherit;
+}
+.current-day-container, .prior-day-container {
+	margin: 0 75px !important; 
+	width: 550px;
+}
+.AccountSelectionTable{
+    width:800px;
+}
+.AccountSelectionTableTD{
+     vertical-align: top;
+     width:220px;
+}
+.AccountSelectionTableHeaderDiv{
+     width:550px;
+}
+.AccountSelectionSubTable{
+     border: 0; padding: 1px;
+}
+.AccountSelectionFixedHeader{
+    background-color: #6495ED;
+}
+.AccountSelectionTH1{
+    text-align:left; 
+    width:15px;
+}
+.AccountSelectionTH2{
+    text-align:left; 
+    width:165px; 
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionTH3{
+    text-align:left; 
+    width:90px; 
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionTH4{
+    text-align:left; 
+    width:70px; 
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionTH5{
+    text-align:right; 
+    width:130px;
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionListView{
+    height:210px; width:550px; overflow:auto
+}
+.AccountSelectionTD1{
+    text-align:left; 
+    width:15px;
+}
+.AccountSelectionTD2{
+    text-align:left; 
+    width:165px; 
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionTD3{
+    text-align:left; 
+    width:100px;
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionTD4{
+    text-align:left; 
+    width:80px;
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionTD5{
+    text-align:right; 
+    width:120px;
+    padding-left: 5px; 
+    padding-right: 10px;
+}
+.AccountSelectionListViewTable {
+    border: 0; padding: 1px;
+}
+
+.AdditionalReportingfieldLabel {
+	font-weight: bold;
+	padding-right: 15px;
+	text-align: right;
+	white-space: nowrap;
+	font-size: 12px; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	padding-left: 5px;    
+    width: 35px;
+}
+.AdditionalReportingfieldRow{
+    height:6px;
+}
+.AdditionalReportingfieldRowSmaller{
+    font-size:smaller;
+}
+.AdditionalReportingDivTop{
+    vertical-align:top;
+}
+.divAdditionalOptions{
+    margin-top:5px;
+}
+.AdditionReportsAmounts{
+    height: 6px; font-size: smaller;
+}
+.AdditionReportsAmountsTD{
+    font-style:italic; 
+    text-align:right; 
+    padding-right:10px
+}
+.AdditionReportsTable{
+    border: 0;
+}
+.DateRangeTable{
+    border: 0;
+}
+.DateRangeSelectionTableEDI{
+    border:0; width:1200px;
+
+
+}
+
+.DateRangeSelectionTableRBL{
+    border:0; width:1000px;
+}
+.DateRangeSelectionTD140{
+    width:140px;
+}
+.DateRangeSelectionTD160Display{
+    width:160px;
+    font-weight:normal; text-align: center; padding-left:15px
+}
+.DateRangeSelectionTD200{
+    width:200px;
+}
+.DateRangeSelectionTD800{
+    width:800px;
+}
+.DateRangeSelectionTD900{
+    width:900px;
+}
+.DateRangefieldLabel30 {
+	font-weight: bold;
+	padding-right: 15px;
+	text-align: right;
+	white-space: nowrap;
+	font-size: 12px; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	padding-left: 5px;    
+    width: 30px;
+}
+.DateRangefieldLabel35 {
+	font-weight: bold;
+	padding-right: 15px;
+	text-align: right;
+	white-space: nowrap;
+	font-size: 12px; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	padding-left: 5px;    
+    width: 35px;
+}
+.DateRangefieldLabel50 {
+	font-weight: bold;
+	padding-right: 15px;
+	text-align: right;
+	white-space: nowrap;
+	font-size: 12px; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	padding-left: 5px;    
+    width: 50px;
+}
+.DateRangefieldLabel160 {
+	font-weight: bold;
+	padding-right: 15px;
+	text-align: right;
+	white-space: nowrap;
+	font-size: 12px; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	padding-left: 5px;    
+    width: 160px;
+}
+.DateRangeDivTop{
+    vertical-align:top;
+}
+.DateRangeDivTop20{
+    vertical-align:top;
+    width: 20px;
+}
+.DateRangeDivTop40{
+    vertical-align:top;
+    width: 40px;
+}
+.DateRangeDivTop80{
+    vertical-align:top;
+    width: 80px;
+}
+.DateRangeDivTop220{
+    vertical-align:top;
+    width: 220px;
+}
+.DateRangeDiv160{
+    width:160px; 
+    font-weight:normal; 
+    text-align: center; 
+    padding-left:15px
+}
+.DateRangeDivMargin5{
+    margin-top:5px;
+}
+.DateRangeDivMargin5Hide{
+    margin-top:5px;
+    display:none;
+}
+.DateRangeFontBold{
+    font-weight: bold;
+}
+.DateRangeFontItalic8 {
+    font-style: italic;
+    font-size: 8px;
+}
+.PositivePayExceptionsWidgetTable .positive-pay-exceptions-data-container { 
+	height: 15px !important; 
+	overflow: auto;
+} 

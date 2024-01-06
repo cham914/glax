@@ -1,0 +1,444 @@
+﻿var rulelist = [];
+
+$(document).ready(function () {
+
+    $('.rulesLabelDisplayControl').hide();
+
+    var baddecission = true;
+    var usejhadynamicrules = $(".jhadynamicrules").val();
+    var themenameforfi = $(".themename").val();
+    var c = 0;
+    var dynapopup = document.getElementById('jha-dynarule-popup-container');
+    dynapopup.style.display = 'none';
+
+    var pinText = $('#PinSoftText').val();
+    var imgAltAttrRemoveFF = $('#imgAltAttrRemove').val();
+    var img = document.getElementById('dynamicPasswordCompare');
+
+    //  If the page has a PinSoftText hidden field with an error image, 
+    //  add an alt text string {pinText}s must match
+    if (pinText !== undefined && pinText !== null && img !== null && img !== undefined) 
+    {
+        if (imgAltAttrRemoveFF.toLowerCase() == "false") {
+
+        }
+        else {
+            img.setAttribute("alt", pinText.trim() + "s must match");
+        }
+    }
+
+    function hideIcon() {
+        $('.ClientValidationSpan').hide();
+    }
+
+    function showIcon() {
+        $('.ClientValidationSpan').show();
+    }
+
+    $('.showRulesLabelControl').focus(function() {
+        var label = $(this).next().find('.rulesLabelDisplayControl');
+        label.show();
+        hideIcon();
+        var hidden_ff = $('#hiddenff_cm').val();
+        if (hidden_ff == "true") {
+            $('.PasswordErrorText').empty();
+        }
+    });
+
+    $('.showRulesLabelControl').blur(function() {
+        var label = $(this).next().find('.rulesLabelDisplayControl');
+        label.hide();
+        showIcon();
+    });
+
+    $('.newSsoPasswordConfirm').focus(function(event) {
+        $('.newSsoPasswordConfirm').next('.ClientValidationSpan').hide();
+    });
+
+    $('.newSsoPasswordConfirm').blur(function (event) {
+        var path = '';
+        var newSsoLoginElement = document.getElementsByClassName('LoginNewCmAliasNewSSOIDTextBox');
+        if (newSsoLoginElement.length > 0) {
+            path = '../../images/';
+        }else{
+            path = '../../../images/';
+        }
+
+        $('.PasswordErrorText').empty();
+        var firstPassword = document.getElementsByClassName('NewSsoPasswordTextBox')[0].value;
+        var secondPassword = event.target.value;
+
+        if (!firstPassword && ! secondPassword) {
+            $('.newSsoPasswordConfirm').next('.ClientValidationSpan').hide();
+        }
+        else if (firstPassword === secondPassword) {
+                img.setAttribute("src", path + "icon_success.png");
+            $('.newSsoPasswordConfirm').next('.ClientValidationSpan').show();
+        } else {
+            img.setAttribute("src", path + "icon_error.png");
+            var text = document.createTextNode("  " + pinText + "s must match");
+            $('.PasswordErrorText').append(text);
+            $('.ClientValidationSpan').show();
+        }
+    });
+
+
+
+    if (usejhadynamicrules == 'False' && baddecission == false) {
+        
+        var noteboxes = document.getElementsByClassName("jha-dynarule-hide-container");
+        for (var k = 0; k < noteboxes.length; k++) {
+            noteboxes[k].style.display = 'none';
+        };
+
+        $("[class*=jha-dynarule-note-]").each(function (i, ele) {
+
+            var rName = ele.className.substring(ele.className.indexOf("jha-dynarule-note-") + 18, ele.className.length);
+            var rWatchTextbox = "jha-dynarule-text-" + rName + "";
+            var o = document.getElementsByClassName(rWatchTextbox);
+            var txt = ele.innerHTML;
+            var rulestxt = "";
+            var rulesreg = "";
+
+
+                var obj = { rulename: rName, ruletext: txt, regex: "skip", imgsrc: "icon_alert.png", valid: true };
+                rulelist[c] = obj;
+                c++;
+            
+
+            document.getElementById(o[0].id).addEventListener("click", function (event) {
+                if (rulelist.length > 0) {
+                    var sender = event.target.className;
+                    sender = sender.substring(sender.indexOf("jha-dynarule-text-") + 18, sender.length);
+                    var rulepopup = "";
+                    for (var i = 0 ; i < rulelist.length; i++) {
+                        if (sender == rulelist[i].rulename.toString().trim()) {
+                            rulepopup += "<label class='LoginNewCmAliasSSOPasswordNoteLabel jha-dynarule-popupnote'>" + rulelist[i].ruletext + "</lable>";
+                        }
+                    }
+                    var popup = document.getElementById("jha-dynarule-popup-container")
+                    popup.style.display = 'inline';
+                    while (popup.firstChild) {
+                        popup.removeChild(popup.firstChild);
+                    }
+                    popup.innerHTML = rulepopup;
+                    var accountsOffset = $(event.target).offset();
+                    $("#jha-dynarule-popup-container").css("top", accountsOffset.top).css("left", accountsOffset.left + 255).css("dispay", "block");
+                }
+            });
+        });
+    } else if (usejhadynamicrules == 'True' && baddecission == false) {
+        var noteboxes = document.getElementsByClassName("jha-dynarule-hide-container");
+        for (var k = 0; k < noteboxes.length; k++) {
+            noteboxes[k].style.display = 'none';
+        };
+
+        $("[class*=jha-dynarule-note-]").each(function (i, ele) {
+
+            var rName = ele.className.substring(ele.className.indexOf("jha-dynarule-note-") + 18 , ele.className.length);
+            var rWatchTextbox = "jha-dynarule-text-" + rName + "";
+            var o = document.getElementsByClassName(rWatchTextbox);
+            var txt = ele.innerHTML;
+            var rulestxt = "";
+            var rulesreg = "";
+
+            if (txt.indexOf("jha-dynarule-rule") > 0) {
+                do {
+                    rulestxt = txt.substring(0, txt.indexOf("<rule"));
+                    rulesreg = txt.substring(txt.indexOf("jha-dynarule-rule") + 19, txt.indexOf("</rule>"));
+                    var obj = { rulename: rName, ruletext: rulestxt, regex: rulesreg, imgsrc: "icon_alert.png", valid: false };
+                    rulelist[c] = obj;
+                    c++;
+                    txt = txt.substring(txt.indexOf("</rule>") + 7, txt.length);
+                } while (txt.indexOf("</rule>") > 0);
+
+                if (txt.length > 0) {
+                    // error should not have any text left
+                    var obj = { rulename: rName, ruletext: txt, regex: "skip", imgsrc: "icon_alert.png", valid: true };
+                    rulelist[c] = obj;
+                    c++;
+                }
+            } else {
+                //no rule so just use the text
+                var obj = { rulename: rName, ruletext: txt, regex: "skip", imgsrc: "icon_alert.png", valid: true };
+                rulelist[c] = obj;
+                c++;
+            }
+
+            document.getElementById(o[0].id).addEventListener("click", function (event) {
+                if (rulelist.length > 0) {
+                    event.target.style.backgroundColor = "#ffffff";
+                    var sender = event.target.className;
+                    sender = sender.substring(sender.indexOf("jha-dynarule-text-") + 18, sender.length);
+                    var rulepopup = "";
+                    for (var i = 0 ; i < rulelist.length; i++) {
+                        if (sender == rulelist[i].rulename) {
+                            rulepopup += "<img id='jha-dynarule-image-" + i + "' src='../../images/" + rulelist[i].imgsrc + "' class='jha-dynarule-image' /><label class='jha-dynarule-popupnote'>" + rulelist[i].ruletext + "</lable>";
+                        }
+                    }
+                    var popup = document.getElementById("jha-dynarule-popup-container")
+                    popup.style.display = 'inline';
+                    while (popup.firstChild)
+                    {
+                        popup.removeChild(popup.firstChild);
+                    }
+                    popup.innerHTML = rulepopup;
+                    var accountsOffset = $(event.target).offset();
+                    $("#jha-dynarule-popup-container").css("top", accountsOffset.top).css("left", accountsOffset.left + 255).css("dispay", "block");
+                }
+            });
+                        
+            document.getElementById(o[0].id).addEventListener("keyup", function (event) {
+                if (rulelist.length > 0) {
+                    var sender = event.target.className;
+                    sender = sender.substring(sender.indexOf("jha-dynarule-text-") + 18, sender.length);
+                    for (var i = 0 ; i < rulelist.length; i++) {
+                        var j = event.target.className.toString();
+                        if (rulelist[i].regex.indexOf("match:") == 0  && sender == rulelist[i].rulename) {
+                            var c = rulelist[i].regex.toString();
+                            c= c.substring(c.indexOf(":") + 1, c.length)
+                            c = "jha-dynarule-text-" + c;
+                            var m = document.getElementsByClassName(c);
+                            var txtmatchie = document.getElementById(m[0].id);
+                            var txtmatcher = document.getElementById(event.target.id);
+                            if (txtmatcher.value == txtmatchie.value) {
+                                rulelist[i].imgsrc = "icon_success.png";
+                                var imgctrl = "jha-dynarule-image-" + i.toString();
+                                document.getElementById(imgctrl).src = rulelist[i].imgsrc;
+                                rulelist[i].valid = true;;
+                            } else {
+                                rulelist[i].imgsrc = "icon_error.png";
+                                var imgctrl = "jha-dynarule-image-" + i.toString()
+                                document.getElementById(imgctrl).src = rulelist[i].imgsrc;
+                                rulelist[i].valid = false;
+                            }
+                        }
+                        else if (sender == rulelist[i].rulename && rulelist[i].regex != "skip")
+                        {
+                            var reg = new RegExp(rulelist[i].regex);
+                            var res = reg.test(event.target.value);
+                            if (res) {
+                                rulelist[i].imgsrc = "icon_success.png";
+                                var imgctrl = "jha-dynarule-image-" + i.toString();
+                                document.getElementById(imgctrl).src = rulelist[i].imgsrc;
+                                rulelist[i].valid = true;
+                            } else {
+                                rulelist[i].imgsrc = "icon_error.png";
+                                var imgctrl = "jha-dynarule-image-" + i.toString()
+                                document.getElementById(imgctrl).src = rulelist[i].imgsrc;
+                                rulelist[i].valid = false;
+                            }
+                        }
+                    }
+                }
+            });
+
+            document.getElementById(o[0].id).addEventListener("blur", function (event) {
+                if (rulelist.length > 0) {
+                    var sender = event.target.className;
+                    sender = sender.substring(sender.indexOf("jha-dynarule-text-") + 18, sender.length);
+                    for (var i = 0 ; i < rulelist.length; i++) {
+                        if (sender == rulelist[i].rulename && rulelist[i].regex == "match")
+                        {
+                            var matchie = document.getElementsByClassName("jha-dynarule-match-matchie");
+                            var txtmatchie = matchie[0];
+                            var matcher = document.getElementsByClassName("jha-dynarule-match-matcher");
+                            var txtmatcher = matcher[0];
+                            if(txtmatcher.textContent == txtmatchie.textContent)
+                            {
+                                document.getElementById(matcher[0].id).style.backgroundColor = '#E1F6DF';
+                                document.getElementById(matcher[0].id).style.borderColor = '#68BC5E';
+                            } else {
+                                document.getElementById(matcher[0].id).style.backgroundColor = '#FFEDED';
+                                document.getElementById(matcher[0].id).style.borderColor = '#D16565';
+                            }
+                        }
+                        else if (sender == rulelist[i].rulename && rulelist[i].regex != "skip") {
+                            if (rulelist[i].valid) {
+                                document.getElementById(o[0].id).style.backgroundColor = '#E1F6DF';
+                                document.getElementById(o[0].id).style.borderColor = '#68BC5E';
+                            } else {
+                                document.getElementById(o[0].id).style.backgroundColor = '#FFEDED';
+                                document.getElementById(o[0].id).style.borderColor = '#D16565';
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    } else if (baddecission == true) {
+        if (themenameforfi != 'Modernized' && location.pathname.indexOf('/Views/Options/OptionsMain.aspx') >= 1)
+        { return; }
+
+        var noteboxes = document.getElementsByClassName("jha-dynarule-hide-container");
+        for (var k = 0; k < noteboxes.length; k++) {
+            noteboxes[k].style.display = 'none';
+        };
+        $("[class*=jha-dynarule-note-]").each(function (i, ele) {
+            var rName = ele.className.substring(ele.className.indexOf("jha-dynarule-note-") + 18, ele.className.length);
+            var rWatchTextbox = "jha-dynarule-text-" + rName + "";
+            var o = document.getElementsByClassName(rWatchTextbox);
+            var txt = ele.innerHTML;
+            var rulestxt = "";
+            var rulesreg = "";
+
+            if (txt.indexOf("jha-dynarule-rule") > 0) {
+                do {
+                    rulestxt = txt.substring(0, txt.indexOf("<rule"));
+                    rulesreg = txt.substring(txt.indexOf("jha-dynarule-rule") + 19, txt.indexOf("</rule>"));
+                    var obj = { rulename: rName, ruletext: rulestxt, regex: rulesreg, imgsrc: "pixel.gif", valid: false };
+                    rulelist[c] = obj;
+                    c++;
+                    txt = txt.substring(txt.indexOf("</rule>") + 7, txt.length);
+                } while (txt.indexOf("</rule>") > 0);
+
+                if (txt.length > 0) {
+                    // error should not have any text left
+                    var obj = { rulename: rName, ruletext: txt, regex: "skip", imgsrc: "pixel.gif", valid: true };
+                    rulelist[c] = obj;
+                    c++;
+                }
+            } else {
+                //no rule so just use the text
+                var obj = { rulename: rName, ruletext: txt, regex: "skip", imgsrc: "pixel.gif", valid: true };
+                rulelist[c] = obj;
+                c++;
+            }
+
+            document.getElementById(o[0].id).addEventListener("focus", function (event) {
+                if (rulelist.length > 0) {
+                    $("#jha-dynarule-popup-container").hide();
+                    event.target.style.backgroundColor = "#ffffff";
+                    var sender = event.target.className;
+                    sender = sender.substring(sender.indexOf("jha-dynarule-text-") + 18, sender.length);
+                    var rulepopup = "";
+                    for (var i = 0 ; i < rulelist.length; i++) {
+                        if (sender == rulelist[i].rulename) {
+                            if (rulelist[i].ruletext == "")
+                            {
+                                return;
+                            }
+                            var sRule = rulelist[i].ruletext.toString();
+                            if (rulelist[i].ruletext.toString().indexOf("contain the following special characters") > 0) {
+                                var intStart = sRule.indexOf("following special characters") + 29;
+                                sRule = sRule.substring(0, intStart) + "<br>&nbsp&nbsp" + sRule.substring(intStart, sRule.length);
+                            } 
+                            if (rulelist[i].ruletext.toString().indexOf("characters in length") > 0) {
+                                var intStart = sRule.indexOf("characters in length") + 13;
+                                sRule = sRule.substring(0, intStart) + "<br>&nbsp&nbsp" + sRule.substring(intStart, sRule.length);
+                            }
+                            if (rulelist[i].ruletext.toString().indexOf("contain at least 1 special character") > 0) {
+                                var intStart = sRule.indexOf("contain at least 1 special character") + 37;
+                                sRule = sRule.substring(0, intStart) + "<br>&nbsp&nbsp" + sRule.substring(intStart, sRule.length);
+                            }
+                            if (rulelist[i].ruletext.toString().indexOf("contain at least 1 upper and lower case letter") > 0) {
+                                var intStart = sRule.indexOf("upper and lower") + 15;
+                                sRule = sRule.substring(0, intStart) + "<br>&nbsp&nbsp" + sRule.substring(intStart, sRule.length);
+                            }
+                            if (rulelist[i].ruletext.toString().indexOf("Must not match one of the previous") > 0) {
+                                var intStart = sRule.indexOf("not match one of the previous") + 31;
+                                sRule = sRule.substring(0, intStart) + "<br>&nbsp&nbsp" + sRule.substring(intStart, sRule.length);
+                            }
+                            rulepopup = "<label class='jha-dynarule-popupnote'>" + sRule + "</label>";
+                        } 
+                    }
+                    var popup = document.getElementById("jha-dynarule-popup-container");
+                    popup.style.display = 'inline';
+                    popup.className = "LoginNewCmAliasIDNoteDiv jha-dynarule-popup-container";
+                    while (popup.firstChild) {
+                        popup.removeChild(popup.firstChild);
+                    }
+                    var accountsOffset = $(event.target).offset();
+                    var adjuster = 0;
+                    switch (sender) {
+                        case 'alias':
+                             if (rulepopup.substring(rulepopup.length - 8, rulepopup.length) === "</label>") {
+                                rulepopup = rulepopup.substring(0, rulepopup.length -8);
+                                 rulepopup = rulepopup + "<br>- Must not match or contain your password.</label>";
+                             }
+                            break;
+                        case 'password':
+                            if (rulepopup.length > 380) {
+                                adjuster = - 100;
+                            }
+                            else if (rulepopup.length > 350) {
+                                adjuster = -60;
+                            } else if (rulepopup.length > 250) {
+                                adjuster = -20;
+                            }
+                            if (rulepopup.substring(rulepopup.length -13, rulepopup.length - 9) === "<br>") {
+                                rulepopup = rulepopup.substring(0, rulepopup.lastIndexOf("<br>"));
+                                rulepopup = rulepopup + "</label>";
+                            }
+                            break;
+                        case 'confpass':
+                            $(event.target).val('');
+                            adjuster = -2;
+                            break;
+                        default:
+                    }
+                    popup.innerHTML = rulepopup;
+                    if (sender == 'confpass') {
+                        $("#jha-dynarule-popup-container").css("top", accountsOffset.top + adjuster).css("left", accountsOffset.left + 250).hide();
+                    }
+                    else {
+                        $("#jha-dynarule-popup-container").css("top", accountsOffset.top + adjuster).css("left", accountsOffset.left + 250).css("dispay", "block");
+                    }
+                }
+            });
+
+            document.getElementById(o[0].id).addEventListener("blur", function (event) {
+                $("#jha-dynarule-popup-container").hide();
+                if (rulelist.length > 0) {
+                    var sender = event.target.className;
+                    sender = sender.substring(sender.indexOf("jha-dynarule-text-") + 18, sender.length);
+                    for (var i = 0 ; i < rulelist.length; i++) {
+                        if (sender == rulelist[i].rulename && rulelist[i].regex.indexOf("match:") == 0) {
+                            var c = rulelist[i].regex.toString();
+                            c = c.substring(c.indexOf(":") + 1, c.length)
+                            c = "jha-dynarule-text-" + c;
+                            var m = document.getElementsByClassName(c);
+                            var matchie = document.getElementById(m[0].id);
+                            var matcher = document.getElementsByClassName("jha-dynarule-text-" + sender);
+                            var txtmatcher = document.getElementById(matcher[0].id);
+                            if (txtmatcher.value == ""  || matchie.value == "")
+                            { return;}
+                            if (txtmatcher.value == matchie.value) {
+                                var popup = document.getElementById("jha-dynarule-popup-container")
+                                rulepopup = "<img src='../../images/icon_success.png'>";
+                                popup.style.display = 'inline';
+                                popup.className = "jha-dynarule-popup-container";
+                                while (popup.firstChild) {
+                                    popup.removeChild(popup.firstChild);
+                                }
+                                popup.innerHTML = rulepopup;
+                                var accountsOffset = $(event.target).offset();
+                                var adjuster = 2;
+                                var theme = $('#themename').valueOf()[0];
+                                if (theme.value == "Modernized")
+                                { adjuster = 10; }
+                                $("#jha-dynarule-popup-container").css("top", accountsOffset.top + adjuster).css("left", accountsOffset.left + 250).css("dispay", "block");
+                            } else {
+                                var popup = document.getElementById("jha-dynarule-popup-container")
+                                rulepopup = "<div><img src='../../images/icon_error.png'></div><div><label class='SSONewConfirmPasswordLabel jha-dynarule-popupnote'>" + rulelist[i].ruletext + "</lable></div>";
+                                popup.style.display = 'flex';
+                                popup.className = "jha-dynarule-popup-container";
+                                while (popup.firstChild) {
+                                    popup.removeChild(popup.firstChild);
+                                }
+                                popup.innerHTML = rulepopup;
+                                var accountsOffset = $(event.target).offset();
+                                var adjuster = 2;
+                                var theme = $('#themename').valueOf()[0];
+                                if (theme.value == "Modernized")
+                                { adjuster = 10; }
+                                $("#jha-dynarule-popup-container").css("top", accountsOffset.top + adjuster).css("left", accountsOffset.left + 250).css("dispay", "block");
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    }
+});

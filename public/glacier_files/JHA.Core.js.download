@@ -1,0 +1,405 @@
+﻿/// <reference path="jquery-1.9.1.js" />
+/// <reference path="JHA.Core.js" />
+
+//-----------------------------------------------
+// jQuery Extensions
+//-----------------------------------------------
+jQuery.namespace = function() {
+	var a = arguments, o = null, i, j, d;
+	for (i = 0; i < a.length; i = i + 1) {
+		d = a[i].split(".");
+		o = window;
+		for (j = 0; j < d.length; j = j + 1) {
+			o[d[j]] = o[d[j]] || {};
+			o = o[d[j]];
+		}
+	}
+	return o;
+};
+
+jQuery.parseFunction = function(name) {
+	var d = jQuery.trim(name).split(".");
+	var o = window;
+	for (var i = 0; i < d.length - 1; i = i + 1) {
+		o[d[i]] = o[d[i]] || {};
+		o = o[d[i]];
+	}
+	return o[d.last()];
+};
+
+$.fn.extend({
+	toJson: function() {
+		return JSON.stringify($(this)[0]);
+	}
+});
+
+$.fn.extend({
+	fromJson: function (jsonText) {
+		return JSON.parse(jsonText);
+	}
+});
+
+$.extend({
+	getQueryStringVars: function () {
+		var vars = [], hash;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for (var i = 0; i < hashes.length; i++) {
+			hash = hashes[i].split('=');
+			vars.push(hash[0]);
+			vars[hash[0]] = hash[1];
+		}
+		return vars;
+	},
+	getQueryStringVar: function (name) {
+		return $.getQueryStringVars()[name];
+	}
+});
+
+(function($) {
+	$.fn.extend($.ui.dialog.prototype, {
+	
+		_original_init : $.ui.dialog.prototype._init,
+		_init: function() {
+			this._original_init();
+			
+			if(this.options.showWaitMessage) {
+
+				$('.ui-dialog-titlebar').after("<div class='modal-loading-content'><br/><br/><br/><br/>Loading...</div>");
+
+				var nodeName = $(this.element).attr("nodeName");
+				if(nodeName!= null && nodeName.toLowerCase() == 'iframe') {
+					$('.ui-dialog-content').load(function() {
+						$('.modal-loading-content').detach();
+					});
+				}
+				else {
+					$('.ui-dialog-content').ready(function() {
+						$('.modal-loading-content').detach();
+					});
+				}
+			}
+		}
+	});
+
+	$.ui.dialog.showWaitMessage = false;
+})(jQuery); 
+
+//-----------------------------------------------
+// jQuery Defaults
+//-----------------------------------------------
+$.ajaxSetup({
+	type: "POST",
+	contentType: "application/json; charset=utf-8",
+	data: "{}"
+});
+
+//-----------------------------------------------
+// String Functions
+//-----------------------------------------------
+String.format = function () {
+	var s = arguments[0];
+	for (var i = 0; i < arguments.length - 1; i++) {
+		var reg = new RegExp("\\{" + i + "\\}", "gm");
+		s = s.replace(reg, arguments[i + 1]);
+	}
+	return s;
+};
+
+String.prototype.endsWith = function (suffix) {
+	return (this.substr(this.length - suffix.length) === suffix);
+};
+
+String.prototype.startsWith = function (prefix) {
+	return (this.substr(0, prefix.length) === prefix);
+};
+
+String.prototype.stripChars = function (chars) {
+	var rx = new RegExp("[" + chars + "]", 'g');
+	return this.replace(rx, "");
+};
+
+String.prototype.stripNonDecimals = function () {
+	return this.stripChars("^\\d");
+};
+
+String.prototype.fitRight = function (len, pad) {
+	var rc = this.substr(0, len);
+	while (rc.length < len)
+		rc = rc + pad;
+	return rc;
+};
+
+String.prototype.fitLeft = function (len, pad) {
+	var rc = this.substr(0, len);
+	while (rc.length < len)
+		rc = pad + rc;
+	return rc;
+};
+
+String.prototype.trim = function () {
+	var m = this.match(/^\s*(\S+(\s+\S+)*)\s*$/);
+	return (m == null) ? "" : m[1];
+};
+
+String.prototype.rtrim = function () {
+	var s = this;
+	var objRegExp = /^([\w\W]*)(\b\s*)$/;
+
+	if (objRegExp.test(s)) {
+		s = s.replace(objRegExp, '$1');
+	}
+	return s;
+};
+
+String.prototype.ltrim = function () {
+	var s = this;
+	var objRegExp = /^(\s*)(\b[\w\W]*)$/;
+
+	if (objRegExp.test(s)) {
+		s = s.replace(objRegExp, '$2');
+	}
+	return s;
+};
+
+String.prototype.blankToValue = function (val) {
+	var s = this.trim();
+	if (s.length == 0)
+		s = val;
+	return s;
+};
+
+String.prototype.blankToZero = function () {
+	return this.blankToValue(0);
+};
+
+String.prototype.addThousandSeperator = function () {
+	var left = this;
+	var right = "";
+	var period = this.indexOf('.');
+	if (period > -1) {
+		left = this.substring(0, period);
+		right = this.substr(period);
+	}
+	var reg = new RegExp('(-?[0-9]+)([0-9]{3})');
+	while (reg.test(left))
+		left = left.replace(reg, '$1,$2');
+
+	return left + right;
+};
+
+//-----------------------------------------------
+// Date Functions
+//-----------------------------------------------
+String.prototype.parseDate = function () {
+	if (this.length == 0)
+		return null;
+	else {
+		var dateArray = this.split("/");
+		var parsedDate = new Date(dateArray[2], dateArray[0] - 1, dateArray[1], 0, 0, 0, 0);
+		return parsedDate;
+	}
+};
+
+String.prototype.isValidDate = function () {
+	var longMonths = "(01|03|05|07|08|10|12)\\/(0[1-9]|[12]\\d|3[01])";
+	var shortMonths = "(04|06|09|11)\\/(0[1-9]|[12]\\d|30)";
+	var febCase = "02\\/(0[1-9]|[12]\\d)";
+	var years = "(((19)|(20))\\d\\d)";
+	var pattern = new RegExp("^((" + longMonths + ")|(" + shortMonths + ")|" + febCase + ")\\/" + years + "$");
+
+	var valid = false;
+	if (pattern.test(this)) {
+		valid = true;
+		if ((this.substr(0, 2) == '02') && (this.substr(3, 2) == '29')) {
+			var testYear = parseInt(this.substr(6, 4));
+			if (!(testYear % 4 == 0) || ((testYear % 100 == 0) && !(testYear % 400 == 0)))
+				valid = false;
+		}
+	}
+	return valid;
+};
+
+//-----------------------------------------------
+// Array Functions
+//-----------------------------------------------
+Array.prototype.last = function() {
+	return this[this.length - 1];
+};
+
+
+//-----------------------------------------------
+// Namespace
+//-----------------------------------------------
+jQuery.namespace('JHA');
+
+
+//-----------------------------------------------
+// JHA.Core
+//-----------------------------------------------
+JHA.Core = new function () {
+	//-----------------------------------------------
+	// Public Members
+	//-----------------------------------------------
+	var public = {
+
+		//-----------------------------------------------
+		// Number Functions
+		//-----------------------------------------------
+		nullToZero: function (val) {
+			return val == null ? 0 : val;
+		},
+
+		//-----------------------------------------------
+		// Date Functions
+		//-----------------------------------------------
+		getDate: function (now) {
+			if (now == 'undefined' || now == null)
+				now = new Date();
+
+			return ((now.getMonth() + 1) < 10 ? "0" + (now.getMonth() + 1) : (now.getMonth() + 1)) + "/" + (now.getDate() < 10 ? "0" + now.getDate() : now.getDate()) + "/" + (now.getFullYear() < 10 ? "0" + now.getFullYear() : now.getFullYear()) + " " + (now.getHours() < 10 ? "0" + now.getHours() : now.getHours()) + ":" + (now.getMinutes() < 10 ? "0" + now.getMinutes() : now.getMinutes()) + ":" + (now.getSeconds() < 10 ? "0" + now.getSeconds() : now.getSeconds());
+		},
+		getDateWithoutTime: function (now) {
+			if (now == 'undefined' || now == null)
+				now = new Date();
+
+			return ((now.getMonth() + 1) < 10 ? "0" + (now.getMonth() + 1) : (now.getMonth() + 1)) + "/" + (now.getDate() < 10 ? "0" + now.getDate() : now.getDate()) + "/" + (now.getFullYear() < 10 ? "0" + now.getFullYear() : now.getFullYear());
+		},
+		formatDate: function (s) {
+			s = s + "";
+			s = s.replace(/[-.]/g, "/");
+
+			if (s.match("^\\d\\/"))
+				s = "0" + s;
+
+			if (s.match("^\\d\\d\\/\\d\\/"))
+				s = s.substr(0, 3) + "0" + s.substr(3);
+
+			if (s.match("^\\d\\d\\/\\d\\d\\/\\d\\d$")) {
+				if (parseInt(s.charAt(6)) < 5)
+					s = s.substr(0, 6) + "20" + s.substr(6)
+				else
+					s = s.substr(0, 6) + "19" + s.substr(6);
+			}
+
+			return s.isValidDate() ? s : "";
+		},
+		validateDateRange: function (start, stop) {
+			var start = JHA.Core.parseDate(start);
+			var stop = JHA.Core.parseDate(stop);
+			return (start != null && stop != null) && (start <= stop);
+		},
+		stripMilliSecFromDateTime: function (s) {
+			s = s + "";
+			s = (s.length < 6) ? '' : s.substr(0, s.length - 3)
+			if (s.length > 6)
+				s += (s.substr(s.length - 5, 2) > 12) ? ' PM' : ' AM';
+			return s;
+		},
+
+		//-----------------------------------------------
+		// Format Functions
+		//-----------------------------------------------
+		formatDouble: function (s, prec) {
+			s = s + "";
+			s = s.trim();
+			var sign = (s.indexOf('-') == 0) ? "-" : "";
+			var rc = s.stripChars('^\\d.');
+			rc = new String(Math.round(new Number(rc) * (1 * (Math.pow(10, 3)))) / (1 * (Math.pow(10, 3))));
+
+			if (rc.length > 0) {
+				rc = sign + rc;
+				var left = rc;
+				var right = "";
+				if (rc.indexOf('.') > -1) {
+					var sp = rc.split('.');
+					left = sp[0];
+					right = sp[1];
+				}
+
+				if (prec == 0)
+					rc = left;
+				else
+					rc = left + "." + right.fitRight(prec, "0");
+			}
+			return rc;
+		},
+		formatFixed: function (s) {
+			return this.formatDouble(s, 2);
+		},
+		formatFixedNoDecimal: function (s) {
+			return this.formatDouble(s, 0);
+		},
+		formatMoney: function (s) {
+			return s.addThousandSeperator(this.formatFixed(s));
+		},
+		formatMoneyNoDecimal: function (s) {
+			return s.addThousandSeperator(this.formatFixedNoDecimal(s));
+		},
+		formatInteger: function (s) {
+			s = s.trim();
+			var sign = s.indexOf('-') == 0 ? "-" : "";
+			var rc = s.stripChars('^\\d');
+			if (rc.length > 0)
+				rc = sign + rc;
+			return rc;
+		},
+		formatSSN: function (s) {
+			s = s.stripChars("^\\d");
+			var rc = "";
+			var reg = new RegExp('^([0-9]{3})([0-9]{2})([0-9]{4})$');
+			if (reg.test(s))
+				rc = s.replace(reg, '$1-$2-$3');
+			return rc;
+		},
+		formatPhone: function (s) {
+			s = s.stripChars("^\\d");
+			var rc = "";
+			var seven = new RegExp('^([0-9]{3})([0-9]{4})$');
+			var ten = new RegExp('^([0-9]{3})([0-9]{3})([0-9]{4})$');
+			var more = new RegExp('^([0-9]{3})([0-9]{3})([0-9]{4})([0-9]+)$');
+			if (seven.test(s))
+				rc = s.replace(seven, '$1-$2');
+			else if (ten.test(s))
+				rc = s.replace(ten, '($1)$2-$3');
+			else if (more.test(s))
+				rc = s.replace(more, '($1)$2-$3 x$4');
+			return rc;
+		},
+		formatZip: function (s) {
+			s = s.stripChars("^\\d");
+			var rc = "";
+			var zip = new RegExp('^([0-9]{5})$');
+			var plus = new RegExp('^([0-9]{5})([0-9]{4})$');
+			if (zip.test(s))
+				rc = s.replace(zip, '$1');
+			else if (plus.test(s))
+				rc = s.replace(plus, '$1-$2');
+			return rc;
+		},
+
+		//-----------------------------------------------
+		// Blur Functions
+		//-----------------------------------------------
+		blurTrim: function (element) {
+			var e = $(element);
+			e.val(e.val().trim());
+		},
+		blurTrimUpper: function (element) {
+			var e = $(element);
+			e.val(e.val().trim().toUpperCase());
+		},
+		blurUpper: function (element) {
+			var e = $(element);
+			e.val(e.val().toUpperCase());
+		},
+		blurTrimLower: function (element) {
+			var e = $(element);
+			e.val(e.val().trim().toLowerCase());
+		},
+		blurLower: function (element) {
+			var e = $(element);
+			e.val(e.val().toLowerCase());
+		}
+	}
+	return public;
+};

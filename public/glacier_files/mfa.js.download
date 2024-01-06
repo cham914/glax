@@ -1,0 +1,148 @@
+﻿//-----------------------------------------------
+// Document Ready
+//-----------------------------------------------
+$(document).ready(function () {
+	$('.mfa-check-button').click(function (event) {
+	    return JHA.NetTeller.Mfa.MfaCheck('Analyze', '.mfa-check-data', $(this).attr('id'), $(this).attr('value'), '', $(this).attr('onclick'));
+	});
+});
+
+jQuery.namespace('JHA.NetTeller');
+
+JHA.NetTeller.Mfa = new function () {
+
+	//-----------------------------------------------
+	// MFA modal
+	//-----------------------------------------------
+
+	var mfaCheck = function (requestType, dataSelector, id, value, baseUrl, onclick) {
+		var submit = false;
+
+		if (requestType == 'Continue') {
+			submit = successResult(id, onclick);
+		}
+		else if (requestType == 'Close') {
+			$('.mfa-container').remove();
+		}
+		else if (requestType == '') {
+			$('.mfa-container').remove();
+		}
+		else {
+			var hv_InitiateSaveSubmitButtonText = $('#hv_InitiateSaveSubmitButtonText').val();
+			if (hv_InitiateSaveSubmitButtonText !== null && hv_InitiateSaveSubmitButtonText == 'False' && value !== "") {
+					if (requestType == 'Analyze' && value == 'Save' && id == 'ctl00_PageContent_ctl00_SubmitButton') {
+						value = 'Initiate';
+					}
+				}
+		    var url = getUrl(baseUrl);		    
+		    var params = $({ 'requestType': requestType, 'data': getValues(dataSelector), 'id': typeof id == 'undefined' ? '' : id, 'value': typeof value == 'undefined' ? '' : value, 'url': baseUrl, 'onclick': typeof onclick == 'undefined' ? '' : onclick }).toJson();
+			$.ajax({
+				url: url,
+				type: "POST",
+				async: false,
+				data: params,
+				error: function (request, status, error) {
+					JHA.NetTeller.ShowErrorMessage({
+						title: 'Unknown Error',
+						text: error
+					});
+				},
+				success: function (data, textstatus, xmlrequest) {
+					submit = mfaResponse(data.d);
+				}
+			});
+		}
+
+		return submit;
+	}
+
+	var getUrl = function (baseUrl) {
+	    var url = '/MfaCheck';
+		if (baseUrl == '') {
+			url = document.location.protocol + '//' + document.location.host + document.location.pathname + url;
+		}
+		else {
+		    url = document.location.protocol + '//' + document.location.host + document.location.pathname.substring(0, document.location.pathname.toLowerCase().indexOf('/views') + 6) + baseUrl + url;
+		}
+
+		return url;
+	}
+
+	var getValues = function (dataSelector) {
+		var values = '{';
+		$(dataSelector).each(function (index) {
+			var id = $(this).attr('id');
+			var value = $(this).val();
+			if (value == '') {
+				value = $(this).text();
+			}
+			if (values == '{') {
+				values += '"' + id + '" : "' + value + '"';
+			}
+			else {
+				values += ', "' + id + '" : "' + value + '"';
+			}
+		});
+
+		values += '}';
+
+		return values;
+	}
+
+	var mfaResponse = function (response) {
+		var success = false;
+		if (response.Status == 'Error' || response.Action == 'Block') {
+		    if (response.RequestType == 'Analyze') {
+		        JHA.NetTeller.IsMfaModal = true; // turn on flag so we would know how to response appropriately elsewhere
+				var modal = JHA.NetTeller.ShowDivModal(response.Modal);
+				modal.on("dialogclose", function () { $('.mfa-container').remove(); });
+            }
+			$('.mfa-valid-container').hide();
+			$('.mfa-error-container').show();
+        }
+		else if (response.Modal != undefined) {
+		    JHA.NetTeller.IsMfaModal = true; // turn on flag so we would know how to response appropriately elsewhere
+		    var modal = JHA.NetTeller.ShowDivModal(response.Modal);
+		    modal.on("dialogclose", function () { $('.mfa-container').remove(); });
+		    $('.mfa-valid-container').show();
+			$('.mfa-error-container').hide();
+        }
+		else if (response.RequestType == 'Challenge' || response.RequestType == 'Complete' || response.RequestType == 'Analyze') {
+		    if (response.Status == 'Success') {
+		        success = successResult(response.ButtonId, response.OnClick.replace(/\\/g, ""));
+			}
+			else {
+				success = errorResult(response);
+			}
+		}
+
+		return success;
+	}
+
+	var successResult = function (buttonId, onclick) {
+		$('.mfa-container').remove();
+		$('.mfa-check-button').unbind('click');
+		$('#' + buttonId).attr('onclick', onclick);
+		$('#' + buttonId).click();
+		return true;
+	}
+
+	var errorResult = function (response) {
+		$('.mfa-container').remove();
+		JHA.NetTeller.ShowErrorMessage({
+		    title: response.Data,
+			text: response.ErrorMessage
+		});
+		return true;
+	}
+
+	//-----------------------------------------------
+	// Public Members
+	//-----------------------------------------------
+	var public = {
+		MfaCheck: mfaCheck
+	};
+
+	return public;
+};
+

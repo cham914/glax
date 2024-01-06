@@ -1,0 +1,38 @@
+﻿#loginLinks ul {
+	margin-left: 0;
+	padding-left: 0;
+	display: inline;
+	font-weight: normal; 
+	font-size: 8pt; 
+	font-family: Arial
+	} 
+
+#loginLinks ul li {
+	margin-left: 0;
+	padding: 3px 5px;
+	border-left: 1px solid #000;
+	list-style: none;
+	display: inline;
+	}
+	
+		
+#loginLinks ul li.first {
+	margin-left: 0;
+	border-left: none;
+	list-style: none;
+	display: inline;
+	}
+	
+#loginLinks	a:link 
+{ 
+	text-decoration: none;
+}
+#loginLinks a:visited 
+{
+	text-decoration: none;
+}
+#loginLinks a:hover 
+{
+	text-decoration: underline;
+} 
+

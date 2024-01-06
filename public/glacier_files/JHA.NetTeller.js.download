@@ -1,0 +1,1406 @@
+/// <reference path="jquery-1.9.1.js" />
+/// <reference path="JHA.Core.js" />
+/// <reference path="JHA.ADA.js" />
+
+//-----------------------------------------------
+// Legacy NetTeller Functions
+//-----------------------------------------------
+function postError(message, context) {
+    document.body.style.cursor = '';
+    
+    if (message == 'SESSION_TIMEOUT') JHA.NetTeller.ShowAlert({ onOK: postErrorRedirect, title: 'Session Timeout', message: "We're sorry.  Your session has timed out and you will be redirected to the login page." });
+    else JHA.NetTeller.ShowAlert({ onOK: postErrorRedirect, title: 'Security Warning', message: "We're sorry.  Your session has been disconnected and you will be redirected to the login page." });
+}
+
+function postErrorRedirect() {
+    $(this).dialog('close');
+    window.location = cfReferringUrl;
+}
+
+function post(form, context) {
+    document.body.style.cursor = '';
+    var d = document.createElement('div');
+    if (d) {
+        d.innerHTML = form;
+        var f = d.firstChild;
+        if (f) {
+            document.body.appendChild(f);
+            f.submit();
+        }
+    }
+}
+
+function CopyPasteNumOnlyValidate(txt) {
+        var regex = new RegExp("[^0-9]");
+    if (txt.value != "" && regex.test(txt.value)) {
+        txt.value = "";
+        ADAAlertMessages.push($('#hdAnnounce').html());
+        JHA.ADA.DisplayADAAlert();
+    }
+    return true;
+}
+
+function CopyPasteACHNumberValidate(txt) {
+    var regex = new RegExp("[^0-9]");
+    var text= document.getElementById(txt).value;
+    if (text != "" && regex.test(text)) {
+        document.getElementById(txt).value = "";
+        ADAAlertMessages.push($('#hdAnnounce').html());
+        JHA.ADA.DisplayADAAlert();
+    }
+    return true;
+}
+
+// JavaScript patch for iPad amount entry.
+if ('ontouchstart' in window) { 
+   document.styleSheets[0].insertRule('.k-formatted-value + input { display: block !important; }');
+   document.styleSheets[0].insertRule('.k-formatted-value { display: none !important; }');
+}
+
+//-----------------------------------------------
+// Document Ready
+//-----------------------------------------------
+$(document).ready(function () {
+    JHA.NetTeller.InitTheme($('#themename').val());
+    JHA.NetTeller.InitJHADatePickers();
+    JHA.NetTeller.InitInputHelpText();
+    JHA.NetTeller.GetPemcoPoints();
+});
+
+//-----------------------------------------------
+// Namespace
+//-----------------------------------------------
+jQuery.namespace('JHA');
+
+//-----------------------------------------------
+// JHA.NetTeller
+//-----------------------------------------------
+JHA.NetTeller = new function () {
+
+    //-----------------------------------------------
+    // NetTeller Themes Functions
+    //-----------------------------------------------
+    var initTheme = function (themeName) {
+        if (themeName && themeName.length) {
+            switch (themeName.toLowerCase()) {
+                case 'modernized':
+                    {
+                        initThemeNewTeller();
+                        break;
+                    }
+                case 'newteller':
+                    {
+                        initThemeNewTeller();
+                        break;
+                    }
+                case 'cit':
+                    {
+                        initThemeCIT();
+                        break;
+                    }
+                case 'cit2':
+                    {
+                        initThemeCIT2();
+                        break;
+                    }
+                default:
+                    {
+                        initThemeDefault();
+                        break;
+                    }
+            }
+        } else {
+            initThemeDefault();
+        }
+    };
+
+    var initThemeDefault = function () {
+        Nifty("ul#tabBar a", "normal transparent top");
+        Nifty("td.pageTab", "normal transparent top");
+
+        if ($('div.widget-inner-container').length) {
+            Nifty("div.widget-container", "small alias top bottom");
+            Nifty("div.widget-header", "small alias top bottom");
+        }
+    };
+
+    var initThemeNewTeller = function () {
+        //	$('select:not(select[multiple])').multiselect({
+        //		multiple: false,
+        //		header: false,
+        //		noneSelectedText: 'Select an Option',
+        //		selectedList: 1
+        //	});
+    };
+
+    var initThemeCIT = function () {
+        //	$('select:not(select[multiple])').multiselect({
+        //		multiple: false,
+        //		header: false,
+        //		noneSelectedText: 'Select an Option',
+        //		selectedList: 1
+        //	});
+    };
+    var initThemeCIT2 = function () {
+        //	$('select:not(select[multiple])').multiselect({
+        //		multiple: false,
+        //		header: false,
+        //		noneSelectedText: 'Select an Option',
+        //		selectedList: 1
+        //	});
+    };
+
+    //-----------------------------------------------
+    // Navigation Functions
+    //-----------------------------------------------
+    var navTo = function (inputElements, target) {
+        closeAllModals();
+        target = target == undefined ? 'body' : target;
+        var inputStr = '';
+        for (var i = 0; i < inputElements.length; i++) {
+            var input = inputElements[i];
+            inputStr = String.format('{0}<input type="hidden" id="{1}" name="{1}" value="{2}" />', inputStr, input.name, input.value);
+        }
+
+        $(String.format(
+			'<form id="navForm" name="navForm" method="post">' +
+			'    {0}' +
+			'    <input id="navSubmit" name="navSubmit" type="submit" value="submit" style="display: none;" />' +
+			'</form>', inputStr)
+		).appendTo(target);
+        document.getElementById('navSubmit').click();
+        $('#navForm:last').remove();
+    };
+
+    var plaNavTo = function (inputElements, target) {
+        closeAllModals();
+        target = target == undefined ? 'body' : target;
+        var inputStr = '';
+        for (var i = 0; i < inputElements.length; i++) {
+            var input = inputElements[i];
+            inputStr = String.format('{0}<input type="hidden" id="{1}" name="{1}" value="{2}" />', inputStr, input.name, input.value);
+        }
+
+
+        $('#PLAControlSection :input').each(function (index) {
+            if ($(this).attr('type').toLowerCase() == 'checkbox') {
+                if ($(this).is(":checked")) {
+                    inputStr = String.format('{0}<input type="hidden" id="{1}" name="{1}" value="{2}" />',
+                        inputStr, $(this).attr('name').replace(/\$/g, "_"), "on");
+                }
+            }
+        });
+
+        $(String.format(
+			'<form id="navForm" name="navForm" method="post">' +
+			'    {0}' +
+			'    <input id="navSubmit" name="navSubmit" type="submit" value="submit" style="display: none;" />' +
+			'</form>', inputStr)
+		).appendTo(target);
+        document.getElementById('navSubmit').click();
+        $('#navForm:last').remove();
+    };
+
+    //-----------------------------------------------
+    // NetTeller Timeout Functions
+    //-----------------------------------------------
+    var SessionTimoutSettings = {
+        warningTimeoutId: undefined,
+        sessionTimeoutId: undefined,
+        modalTarget: 'timeout',
+        modalTitle: 'Session Timeout Warning',
+        modalHeight: 225,
+        modalWidth: 450,
+        modalPositionTop: {
+         my: 'center top', at: 'center top'
+        },
+        modalPositionCenter: {
+            my: 'center', at: 'center'
+        },
+        countdownTarget: 'remainingSeconds',
+        sessionDuration: 11,
+        warningDuration: 2,
+        countdownDuration: 60,
+        keepAliveUrl: undefined,
+        logoutUrl: undefined,
+        logoutVersion: 'cf'
+    };
+
+    //-----------------------------------------------
+    // NetTeller Timeout Functions
+    //-----------------------------------------------
+    var setSessionTimeout = function (options) {
+        var settings = jQuery.extend(SessionTimoutSettings, options);
+        var url = document.location.href;
+        var page = url.substring(url.lastIndexOf('/') + 1);
+
+        if (page == 'CommercialBatchInitiate.aspx') {
+            keepSessionAlive();
+        }
+
+        settings.warningTimeoutId = window.setTimeout(function () {
+            showSessionTimeoutMessage();
+        }, (settings.sessionDuration - settings.warningDuration) * 60000);
+    };
+
+    var forceResetSessionTimeout = function (seconds) {
+        var settings = SessionTimoutSettings;
+        var millisecondsLeft = seconds * 1000;
+
+        settings.countdownDuration = 60;
+        clearTimeout(settings.warningTimeoutId);
+        clearTimeout(settings.sessionTimeoutId);
+        updateCountdownSeconds(settings.countdownDuration);
+
+        settings.warningTimeoutId = window.setTimeout(function () {
+            showSessionTimeoutMessage();
+        }, millisecondsLeft);
+    };
+
+    var resetSessionTimeout = function () {
+        /// <summary>
+        ///     Resets client side timer used to detect session timeout.
+        /// </summary>
+        var settings = SessionTimoutSettings;
+        settings.countdownDuration = 60;
+        clearTimeout(settings.warningTimeoutId);
+        clearTimeout(settings.sessionTimeoutId);
+        updateCountdownSeconds(settings.countdownDuration);
+        setSessionTimeout(settings);
+        
+    };
+
+    var showSessionTimeoutMessageDialog = function () {
+        var url = document.location.href;
+        var page = url.substring(url.lastIndexOf('/') + 1);
+        var settings = SessionTimoutSettings;
+        var target;
+        var modalPosition;
+
+        if (page == 'ESIHandoff.aspx' && ((navigator.userAgent.indexOf("MSIE") != -1) || (!!document.documentMode == true))) {
+            modalPosition = settings.modalPositionTop;
+        } else {
+            modalPosition = settings.modalPositionCenter;
+        }
+        $(String.format('#{0}', settings.modalTarget)).dialog({
+            title: settings.modalTitle,
+            width: settings.modalWidth,
+            height: settings.modalHeight,
+            modal: true,
+            resizable: false,
+            position: modalPosition,
+            buttons: {
+                'Close Session': function() {
+                    target = 'close';
+                    $(this).dialog('close');
+                    sessionTimedOut();
+                },
+                'Continue Session': {
+                    click: function() {
+                        target = 'continue';
+                        $(this).dialog('close');
+                        keepSessionAlive();
+                    },
+                    text: 'Continue Session',
+                    'class': 'ColorButton'
+                }
+            },
+            open: function(event, ui) {
+                countdownToSessionTimeout(settings.countdownDuration);
+            },
+            close: function(event, ui) {
+                if (target != 'continue') {
+                    sessionTimedOut();
+                }
+            }
+        });
+    };
+
+    var showSessionTimeoutMessage = function () {
+        var settings = SessionTimoutSettings;
+        var url = document.location.href;
+        var page = url.substring(url.lastIndexOf('/') + 1);
+        var countdownSeconds = 60;
+
+        if (page == 'IPayHandoff.aspx' || page == 'OfmMain.aspx') {
+            var replaceView = '';
+            switch (page) {
+                case 'IPayHandoff.aspx':
+                    replaceView = 'Views/IPay/' + page;
+                    break;
+                case 'OfmMain.aspx':
+                    replaceView = 'Views/Ofm/' + page;
+                    break;
+            }
+            var checkMethod = url.replace(replaceView, 'SessionKeepAlive.aspx/GetSecondsLeft');
+            $.ajax({
+                url: checkMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{}",
+                success: function (response) {
+                    var secondsRemaining = parseFloat(response.d);
+                    if (secondsRemaining > countdownSeconds) {
+                        var secondsToShowDialog = secondsRemaining - countdownSeconds;
+                        forceResetSessionTimeout(secondsToShowDialog);
+                    }
+                    else {
+                        if (secondsRemaining < 1) {
+                            secondsRemaining = 1;
+                        }
+                        settings.countdownDuration = secondsRemaining;
+                        updateCountdownSeconds(settings.countdownDuration);
+                        showSessionTimeoutMessageDialog();
+                    }
+                }
+            });
+        }
+        else {
+            showSessionTimeoutMessageDialog();
+        }
+    };
+
+    var countdownToSessionTimeout = function (remainingSeconds) {
+        var settings = SessionTimoutSettings;
+        settings.sessionTimeoutId = window.setTimeout(function () {
+            remainingSeconds--;
+            if (remainingSeconds < 1) {
+                sessionTimedOut();
+            } else {
+                updateCountdownUI(remainingSeconds);
+                countdownToSessionTimeout(remainingSeconds);
+            };
+        }, 1000);
+    };
+
+    var updateCountdownUI = function (remainingSeconds) {
+        updateCountdownTitle(remainingSeconds);
+        updateCountdownSeconds(remainingSeconds);
+    };
+
+    var updateCountdownTitle = function (remainingSeconds) {
+        if ((remainingSeconds % 2) == 0) return;
+        var titleText = document.title;
+        document.title = String.format('WARNING: Session Timeout In {0} Second(s) - {1}', remainingSeconds, titleText);
+        window.setTimeout(function () {
+            document.title = titleText;
+        }, 950);
+    };
+
+    var updateCountdownSeconds = function (remainingSeconds) {
+        var settings = SessionTimoutSettings;
+        if (remainingSeconds <= 40 && remainingSeconds % 10 == 0) {
+            $('#adaHiddenRemainsec').text(remainingSeconds + ' seconds');
+        } else if (remainingSeconds < 10) {
+            if (remainingSeconds == 1) {
+                $('#adaHiddenRemainsec').text(remainingSeconds + ' second');
+            } else {
+                $('#adaHiddenRemainsec').text(remainingSeconds);
+            }
+        }
+       
+      $(String.format('#{0}', settings.countdownTarget)).text(remainingSeconds);
+    };
+
+    var keepSessionAlive = function () {
+        var settings = SessionTimoutSettings;
+        $.ajax({
+            url: settings.keepAliveUrl,
+            success: function (response) {
+                resetSessionTimeout();
+            }
+        });
+    };
+
+    var sessionTimedOut = function () {
+        var settings = SessionTimoutSettings;
+        clearTimeout(settings.warningTimeoutId);
+        clearTimeout(settings.sessionTimeoutId);
+        if (settings.logoutVersion.indexOf("cf") == 0) {
+            JHA.NetTeller.NavTo([{ name: 'navLocation', value: 'Logoff' }]);
+        } else {
+            navTo([{ name: 'navLocation', value: 'LogoffNT' }]);
+        }
+    };
+
+    //-----------------------------------------------
+    // NetTeller UI Message Functions
+    //-----------------------------------------------
+    var isElementInView = function (target) {
+        var w = $(window);
+        var docViewTop = w.scrollTop();
+        var docViewBottom = docViewTop + w.height();
+
+        var t = $(target);
+        var elemTop = t.offset().top;
+        var elemBottom = elemTop + t.height();
+
+        return ((docViewTop < elemTop) && (docViewBottom > elemBottom));
+    };
+
+    var scrollTo = function (target) {
+        if (!isElementInView(target)) {
+            $('html, body').animate({
+                scrollTop: $(target).parent().offset().top
+            }, 750);
+        }
+    };
+
+    var showAlert = function (settings) {
+        defaults = {
+            title: '',
+            text: '',
+            message: '',
+            width: 400,
+            onOK: function () {
+                $(this).dialog('close');
+            }
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+        $(String.format('<div id="dialog-message" role="alert" title="{0}"><p>{1}</p></div>', options.title, options.message)).dialog({
+            modal: true,
+            resizable: false,
+            width: options.width,
+            buttons: {
+                'Ok': {
+                    click: options.onOK,
+                    text: 'Ok',
+                    'class': 'ColorButton'
+                }
+            }
+        });
+    };
+
+    var showMessage = function (settings) {
+        defaults = {
+            title: '',
+            text: '',
+            target: $('#ajax-message-container'),
+            backgroundColor: undefined,
+            hide: true,
+            duration: 3000,
+            onComplete: undefined
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+        scrollTo($(options.target));
+        hideMessages($(options.target));
+
+        return $(
+			'<div class="ajax-message" style="display:none;">' +
+			'	<div class="ajax-message-header">' + options.title + '</div>' +
+			'	<div class="ajax-message-body">' + options.text + '</div>' +
+			'</div>'
+		).appendTo(options.target)
+			.slideDown(500, function () {
+			    ADAAlertMessages.push(options.text);
+			    JHA.ADA.DisplayADAAlert();
+			    $this = $(this);
+			    $this.effect('highlight', { color: options.backgroundColor }, options.duration, function () {
+			        if (options.hide) {
+			            $this.fadeTo(500, .025, function () {
+			                $this.slideUp(500);
+			            });
+			        }
+			        if (options.onComplete) {
+			            options.onComplete.call();
+			        }
+			    });
+			});
+    };
+
+    var showErrorMessage = function (settings) {
+        defaults = {
+            backgroundColor: '#fef1ec',
+            hide: false
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+        return showMessage(options);
+    };
+
+    var showStartupMessage = function (settings) {
+        defaults = {
+            hide: false
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+        return showMessage(options);
+    };
+
+    var hideMessages = function (parent) {
+        $('.ajax-message:visible', parent).each(function () {
+            $(this).fadeTo(500, .025).slideUp(500);
+        });
+    };
+
+
+    var showNetTellerMessage = function (settings) {
+    	defaults = {
+    		title: '',
+    		text: '',
+    		target: $('#ajax-message-container'),
+    		backgroundColor: undefined,
+    		hide: true,
+    		duration: 3000,
+    		onComplete: undefined
+    	};
+
+    	var options = $.extend(true, {}, defaults, settings);
+    	$(options.target).empty();
+    	scrollTo($(options.target));
+    	hideMessages($(options.target));
+
+    	return $(
+				options.text
+			).appendTo(options.target)
+		.slideDown(500, function () {
+			ADAAlertMessages.push(options.text);
+			JHA.ADA.DisplayADAAlert();
+			$this = $(this);
+		});
+    };
+
+    var showNetTellerErrorMessage = function (settings) {
+    	defaults = {
+    		hide: false
+    	};
+
+    	settings.text = '<div class="InfoMessage_container" role="alert"><div class="ErrorMessageTable" style="display: table; width: 100%;"><div class="ErrorMessageLabel" style="display: table-cell;">Information Message:</div><div class="ErrorMessageTD" style="display: table-cell;"><span>' + settings.text + '<br /></span></div></div></div>';
+
+    	var options = $.extend(true, {}, defaults, settings);
+    	return showNetTellerMessage(options);
+    };
+
+    var showNetTellerInfoMessage = function (settings) {
+    	defaults = {
+    		hide: false
+    	};
+
+    	settings.text = '<div class="InfoMessage_container" role="alert"><div class="InfoMessageTable" style="display: table; width: 100%;"><div class="InfoMessageLabel" style="display: table-cell;">Information Message:</div><div class="InfoMessageTD" style="display: table-cell;"><span>' + settings.text + '<br /></span></div></div></div>';
+
+    	var options = $.extend(true, {}, defaults, settings);
+    	return showNetTellerMessage(options);
+    };
+	
+    var showModal = function (settings) {
+        defaults = {
+            horizontalPadding: 30,
+            verticalPadding: 30,
+            href: 'about:blank',
+            title: 'Configure Widget',
+            width: 800,
+            height: 425,
+            show: 'fade',
+            hide: 'fade',
+            onSave: function () {
+                $(this).dialog('close');
+                JHA.ADA.SetFocus();
+            },
+            onCancel: function () {
+                $(this).dialog('close');
+                JHA.ADA.SetFocus();
+            }
+        };
+
+        resetSessionTimeout();
+        var options = $.extend(true, {}, defaults, settings);
+        return $('<iframe src="about:blank" class="modal-frame" frameBorder="0"></iframe>').dialog({
+            title: options.title,
+            width: options.width,
+            height: options.height,
+            show: options.show,
+            hide: options.hide,
+            modal: true,
+            resizable: false,
+            showWaitMessage: true,
+            buttons: {
+                'Cancel': options.onCancel,
+                'Save': {
+                    click: options.onSave,
+                    text: 'Save',
+                    'class': 'ColorButton'
+                }
+            },
+            open: function (event, ui) {
+                $(this).attr("src", options.href);
+            }
+        }).width(options.width - options.horizontalPadding).height(options.height - options.verticalPadding);
+    };
+
+    var showInfoModal = function (settings, sender) {
+        defaults = {
+            href: 'about:blank',
+            title: '',
+            horizontalPadding: 30,
+            verticalPadding: 30,
+            width: 800,
+            height: 425,
+            dialogClass: 'ShowInfoModalDefaults',
+            resizable: false,
+            show: 'fade',
+            hide: 'fade',
+            onOK: function () {
+                $(this).dialog('close');
+                JHA.ADA.SetFocus();
+            },
+            hideButtons: false
+        };
+
+        if (sender && sender.length > 0) {
+            currentFocusedControl = sender;
+        }
+
+        resetSessionTimeout();
+        var options = $.extend(true, {}, defaults, settings);
+
+        if (options.hideButtons) {
+            return $('<iframe src="about:blank" class="modal-frame" aria-atomic="true" aria-live="assertive" frameBorder="0"></iframe>').dialog({
+                title: options.title,
+                width: options.width,
+                height: options.height,
+                dialogClass: options.dialogClass,
+                resizable: options.resizable,
+                show: options.show,
+                hide: options.hide,
+                modal: true,
+                showWaitMessage: true,
+                open: function (event, ui) {
+                    $(this).attr("src", options.href);
+                }
+            }).width(options.width - options.horizontalPadding).height(options.height - options.verticalPadding);
+        }
+        else {
+            return $('<iframe src="about:blank" class="modal-frame" frameBorder="0"></iframe>').dialog({
+                title: options.title,
+                width: options.width,
+                height: options.height,
+                dialogClass: options.dialogClass,
+                resizable: options.resizable,
+                show: options.show,
+                hide: options.hide,
+                modal: true,
+                showWaitMessage: true,
+                buttons: {
+                    'OK': {
+                        click: options.onOK,
+                        text: 'OK',
+                        'class': 'ColorButton'
+                    }
+                },
+                open: function (event, ui) {
+                    $(this).attr("src", options.href);
+                }
+            }).width(options.width - options.horizontalPadding).height(options.height - options.verticalPadding);
+        }
+    };
+
+    var showHoldsInfoModal = function (element, isCMUser) {
+        JHA.NetTeller.ShowInfoModal({
+            href: $(element).attr('href'),
+            title: 'Holds Information',
+            width: 800,
+            height: 400
+        }, $(element));
+    };
+
+    var showDivModal = function (settings) {
+        var defaults = {
+            target: undefined,
+            title: undefined,
+            dialogClass: 'ShowDivModalDefaults',
+            resizable: false,
+            buttons: undefined,
+            show: 'fade',
+            hide: 'fade',
+            open: undefined,
+            close: undefined,
+            draggable: true,
+            activator: undefined,
+            hideClose: false,
+            position: 'center',
+            appendTo: undefined
+        };
+
+        resetSessionTimeout();
+        var options = $.extend(true, {}, defaults, settings);
+        if (options.modal == false) {
+            options.modal = false;
+        }
+        else {
+            options.modal = true;
+        }
+
+        var modal = $(options.target).dialog({
+            title: options.title,
+            width: options.width,
+            height: options.height,
+            minWidth: options.minWidth,
+            minHeight: options.minHeight,
+            dialogClass: options.dialogClass,
+            resizable: options.resizable,
+            buttons: options.buttons,
+            show: options.show,
+            hide: options.hide,
+            open: options.open,
+            close: options.close,
+            beforeclose: options.beforeclose,
+            draggable: options.draggable,
+            position: options.position,
+            modal: options.modal,
+            appendTo: options.appendTo
+        });
+        if (options.hideClose)
+            $(options.target).dialog({ dialogClass: 'dialog-no-close' });
+
+        return modal;
+    };
+
+    var closeAllModals = function () {
+        var mf = $('.modal-frame');
+        if (mf.length > 0) {
+            mf.dialog('close');
+        }
+    };
+
+    var showTooltip = function (settings) {
+        defaults = {
+            title: undefined,
+            text: undefined,
+            target: undefined,
+            targetPosition: undefined,
+            tipPosition: undefined,
+            buttonText: 'Close',
+            showOnReady: false,
+            showEvent: undefined,
+            hideFixed: false,
+            hideEvent: undefined,
+			hideTarget: undefined,
+            solo: true,
+            style: 'qtip-light',
+            tip: true
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+        if (options.text.length == 0) { return; }
+        if ($(options.target).qtip == null) { return; }
+        return $(options.target).qtip({
+            content: {
+                title: {
+                    text: options.title,
+                    button: options.title && options.hideEvent ? options.buttonText : undefined
+                },
+                text: options.text
+            },
+            position: {
+                // case 7474468  custom : future dated wires
+                // changed hardcoding so can change where the qtip hovers
+                my: options.tipPosition ? options.tipPosition : 'left center',  // Position my top left...
+                at: options.targetPosition ? options.targetPosition : 'right center' // at the bottom right of...
+            },
+            show: {
+                delay: 0,
+                ready: options.showOnReady,
+                solo: options.solo,
+                event: options.showEvent
+            },
+            hide: {
+                fixed: options.hideFixed,
+                event: options.hideEvent,
+                target: options.hideTarget
+            },
+            style: {
+                classes: options.style,
+                tip: options.tip
+            }
+        });
+    };
+
+    var clearNotificationMessage = function () {
+        var ctrl = $('#hdnNotification');
+        $('#hdnNotification').val("");
+    };
+
+    var resetValidation = function (element) {
+        if (element) {
+            $(element).removeClass("validateError");
+            $(element).parent().find('label.validateError').remove();
+        } else {
+            $('input.validateError, select.validateError, table.validateError, td.validateError').removeClass("validateError");
+            $('label.validateError').remove();
+        }
+    };
+
+    var showValidation = function (settings) {
+        defaults = {
+            title: undefined,
+            text: undefined,
+            target: undefined,
+            targetLabel: undefined,
+            targetPosition: 'rightMiddle',
+            tipPosition: 'leftMiddle',
+            hideTarget: undefined,
+            type: undefined,
+            errorClass: "validateError",
+            extraClass: '',
+            hideErrorImage: undefined
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+
+        if (options.hideTarget) {
+            ADAInvalidCtrls.push(options.hideTarget);
+            $(options.hideTarget).addClass(options.errorClass);
+        } else {
+            ADAInvalidCtrls.push(options.target);
+        }
+
+        ADAValidationMessages.push(options.text);
+
+        $(options.target).addClass(options.errorClass);
+      
+        if (!options.hideErrorImage) {
+            var labelElement = "<label class='" + options.errorClass + " " + options.extraClass + "'>" + options.title + "</label>";
+            if (options.type) {
+                $(options.target).next().after(labelElement);
+            } else if (options.targetLabel) {
+                $(options.targetLabel).after(labelElement);
+            } else {
+                $(options.target).after(labelElement);
+            }
+        }
+    };
+
+    var showFieldError = function (settings) {
+        defaults = {
+            title: undefined,
+            text: undefined,
+            target: undefined,
+            targetPosition: 'rightMiddle',
+            tipPosition: 'leftMiddle',
+            showOnReady: true,
+            showEvent: 'false',
+            hideFixed: false,
+            hideEvent: 'focus',
+            solo: false,
+            style: 'qtip-red',
+            tip: true
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+        if (options.hideTarget) {
+            ADAInvalidCtrls.push(options.hideTarget);
+        } else {
+            ADAInvalidCtrls.push(options.target);
+        }
+        ADAValidationMessages.push(options.text);
+        return showTooltip(options);
+    };
+
+    var showFieldHelp = function (settings) {
+      /*  $('#ADA_AlertMsg').html(''); */
+        ADAAlertMessages = [];
+        ADAValidationMessages = [];
+        defaults = {
+            text: undefined,
+            target: undefined,
+            targetPosition: 'rightMiddle',
+            tipPosition: 'leftMiddle',
+            showOnReady: false,
+            showEvent: 'focus',
+            hideEvent: 'blur',
+            solo: true,
+            style: 'qtip-light'
+        };
+         
+        var options = $.extend(true, {}, defaults, settings);
+        ADAAlertMessages.push(options.text);
+        JHA.ADA.DisplayADAAlert();
+        return showTooltip(options);
+    };
+
+    var printModal = function (content) {
+        var printContainer = $('#PrintContainer');
+        printContainer.html(content);
+        $('#ContentContainer').addClass('noPrint');
+        $('.ui-dialog').addClass('noPrint');
+        window.print();
+        printContainer.empty();
+        $('#ContentContainer').removeClass('noPrint');
+        $('.ui-dialog').removeClass('noPrint');
+    }
+
+    var print = function (html, title) {
+        var focusPrintInBody = false;
+        resetSessionTimeout();
+
+        var strFrameName = ("printer-" + (new Date()).getTime());
+        var jFrame = $(String.format('<iframe name="{0}"/>', strFrameName));
+
+        // Set width and height to 0px to hide the iframe
+        jFrame
+			.css("width", "0px")
+			.css("height", "0px")
+			.css("position", "absolute")
+			.appendTo($("body:first"));
+
+        var objFrame = window.frames[strFrameName];
+
+        var objDoc = objFrame.document;
+
+        if ((navigator.userAgent.indexOf('MSIE') > -1)) {
+            focusPrintInBody = true;
+        }
+        objDoc.open();
+        objDoc.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+        objDoc.write("<html>");
+
+        if (focusPrintInBody)
+            objDoc.write("<body onload='this.focus();this.print();'>");
+        else
+            objDoc.write("<body>");
+        if (title) {
+            objDoc.write(title);
+        }
+        objDoc.write("<head><title>");
+
+        objDoc.write("</title></head>");
+        objDoc.write(html);
+
+        objDoc.write("</body></html>");
+        objDoc.close();
+
+        // Print the document.
+        if (!focusPrintInBody) {
+            objFrame.focus();
+            objFrame.print();
+        }
+
+
+        // Have the frame remove itself in about a minute so that
+        // we don't build up too many of these frames.
+        setTimeout(function () {
+            jFrame.remove();
+        }, (60000));
+    };
+
+    var print2 = function (html, title) {
+        var focusPrintInBody = false;
+        resetSessionTimeout();
+
+        var strFrameName = ("printer-" + (new Date()).getTime());
+        var jFrame = $(String.format('<iframe name="{0}"/>', strFrameName));
+
+        // Set width and height to 0px to hide the iframe
+        jFrame
+			.css("width", "0px")
+			.css("height", "0px")
+			.css("position", "absolute")
+			.appendTo($("body:first"));
+
+        var objFrame = window.frames[strFrameName];
+
+        var objDoc = objFrame.document;
+
+        if ((navigator.userAgent.indexOf('MSIE') > -1)) {
+            focusPrintInBody = true;
+        }
+        objDoc.open();
+        objDoc.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+        objDoc.write("<html>");
+
+        if (focusPrintInBody)
+            objDoc.write("<body onload='this.focus();this.print();'>");
+        else
+            objDoc.write("<body>");
+        if (title) {
+            objDoc.write(title);
+        }
+        objDoc.write("<head><title>");
+
+        objDoc.write("</title></head>");
+        for (var i = 0; i < html.length; i++) {
+            objDoc.write("<br/>");
+            objDoc.write($(html[i]).html());
+        }
+
+
+
+        objDoc.write("</body></html>");
+        objDoc.close();
+
+        // Print the document.
+        if (!focusPrintInBody) {
+            objFrame.focus();
+            objFrame.print();
+        }
+
+
+        // Have the frame remove itself in about a minute so that
+        // we don't build up too many of these frames.
+        setTimeout(function () {
+            jFrame.remove();
+        }, (60000));
+    };
+
+    var getPemcoPoints = function () {
+        if ($('#pemcoPts').length &&
+           ($('#pemcoPts').attr('isCached') == undefined || $('#pemcoPts').attr('isCached') == "no")) {
+            $.ajax({
+                url: "../../Views/Retail/AccountListing.aspx/GetPemcoPoints",
+                data: $({
+                    'pemcoToken': $('#pemcoPts').attr('pemcoToken')
+                }).toJson(),
+                success: function (data) {
+                    $('#pemcoPts').text(data.d);
+                },
+                error: function (request, status, error) {
+                    $('#pemcoPts').text("0");
+                }
+            });
+        }
+    };
+    //-----------------------------------------------
+    // NetTeller Controlls Functions
+    //-----------------------------------------------
+    var initJHADatePickers = function () {
+        $('.jhaDatePicker').each(function () {
+            var options = $(this).attr("options");
+            var opObj = $.parseJSON(options);
+            $(this).jhaDatePicker(opObj);
+        });
+    };
+
+    var initInputHelpText = function () {
+        $(':input[title]:not(input:checkbox[title])').each(function (i) {
+            $this = $(this);
+            JHA.NetTeller.ShowFieldHelp({
+                target: $this,
+                text: $this.attr('title')
+            });
+            $this.removeAttr('title');
+        });
+    };
+
+    var showProgressPopupTitle = function (title) {
+        var modal = JHA.NetTeller.ShowDivModal({ target: '#progress-indicator-container', title: title, width: 400, minWidth: 400, height: 150, resizable: false, draggable: false, hideClose: true });
+        modal.css('overflow', 'hidden');
+        modal.dialog('option', 'position', "center");
+        showSpinner({ target: '#progress-indicator-container' });
+
+        return modal;
+    };
+
+    var showProgressPopupTitleClose = function (title, showClose) {
+        var modal = JHA.NetTeller.ShowDivModal({ target: '#progress-indicator-container', title: title, width: 400, minWidth: 400, height: 150, resizable: false, draggable: false, hideClose: showClose });
+        modal.css('overflow', 'hidden');
+        modal.dialog('option', 'position', "center");
+        showSpinner({ target: '#progress-indicator-container' });
+
+        return modal;
+    };
+
+    var showProgressPopup = function (title) {
+        var title = 'Authenticating user';
+        var url = document.location.href;
+        var page = url.substring(url.lastIndexOf('/') + 1);
+
+        if (page == 'LoginTransferToColdfusion.aspx') {
+            title = 'Loading accounts';
+        }
+
+        if (page == 'InterbankTransferAddTransfers.aspx' || page == 'InterbankTransferEdit.aspx') {
+            title = 'Saving transfer, please wait ...';
+        }
+
+        if (page == 'InterbankTransferDelete.aspx') {
+            title = 'Deleting transfer, please wait ...';
+        }
+
+        if (page == 'CommercialBatchInitiate.aspx') {
+            title = 'Initiating Batch,  Please Wait ...';
+        }
+
+        if (page == 'OrderChecks.aspx') {
+            title = 'Processing your request. Please wait...';
+        }
+
+        var modal = JHA.NetTeller.ShowDivModal({ target: '#progress-indicator-container', title: title, resizable: false, draggable: false, hideClose: true });
+        modal.css('overflow', 'hidden');
+        modal.dialog('option', 'position', "center");
+        showSpinner({ target: '#progress-indicator-container' });
+
+        return modal;
+    };
+
+    var showSpinner = function (settings) {
+
+        var defaults = {
+            target: undefined,
+            lines: 12, // The number of lines to draw
+            length: 7, // The length of each line
+            width: 5, // The line thickness
+            radius: 9, // The radius of the inner circle
+            rotate: 0, // The rotation offset
+            color: '#000', // #rgb or #rrggbb
+            speed: 1, // Rounds per second
+            trail: 100, // Afterglow percentage
+            shadow: true, // Whether to render a shadow
+            hwaccel: false, // Whether to use hardware acceleration
+            className: 'spinner', // The CSS class to assign to the spinner
+            zIndex: 2e9, // The z-index (defaults to 2000000000)
+            top: 'auto', // Top position relative to parent in px
+            left: 'auto' // Left position relative to parent in px
+        };
+
+        var options = $.extend(true, {}, defaults, settings);
+
+        if (options.target != undefined) {
+            var target = $(options.target)[0];
+            var spinner = new Spinner(options).spin(target);
+        }
+    };
+
+    var showProgressIndicator = function (title) {
+
+        var modal = JHA.NetTeller.ShowDivModal({ target: '#progress-indicator-container', title: title, width: 400, minWidth: 400, height: 150, resizable: false, draggable: false, hideClose: true });
+        modal.css('overflow', 'hidden');
+
+        showSpinner({ target: '#progress-indicator-container' });
+
+        return modal;
+    };
+
+    var draftSelectAllTran = function () {
+        var selectChecked = $('#selectAllTran').is(':checked');
+        $('.galleryCheckImage').prop('checked', selectChecked);
+
+        if (!selectChecked)
+            $('#viewChecksGallery').attr('disabled', 'disabled');
+        else
+            $('#viewChecksGallery').removeAttr('disabled');
+    };
+
+    var draftViewMultiple = function () {
+        var checkGallery = [];
+
+        $('.galleryCheckImage:checked').each(function () {
+            checkGallery.push({
+                content: $(this).attr('imageUrl'), player: 'img',
+                title: $(this).attr('checkTitle'), gallery: "Check Images",
+                options: { displayCheckButtons: true }
+            });
+        });
+
+        Shadowbox.open(checkGallery);
+    };
+
+    var enableDisableViewChecksButton = function () {
+        if ($('.galleryCheckImage:checked').length == 0)
+            $('#viewChecksGallery').attr('disabled', 'disabled');
+        else
+            $('#viewChecksGallery').removeAttr('disabled');
+    };
+
+	var postToSelectPayments = function() {
+		var url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/TransferToSelectPayments';
+		$.ajax({
+			url: url,
+			async: false,
+			error: function(request, status, error) {
+				JHA.NetTeller.ShowJhaErrorMessage({
+					title: 'Unknown Error',
+					text: error
+				});
+			},
+			success: function(data, textstatus, xmlrequest) {
+				var w = window.open();
+				w.document.writeln(data.d);
+			}
+		});
+	};
+
+    // kendo ui functions
+	var keepTrailingZerosOnFocus = function () {
+	    var e = $(this), v;
+	    if (isNaN(v = parseFloat(e.val()))) return;
+	    e.val(v.toFixed(e.attr('data-decimals') || 2));
+	};
+
+    // USD Formatter
+	var formatToUSD = function (val, showSign) {
+	    val = parseFloat(val).toFixed(2);
+	    if (val) {
+	        var d = val.indexOf('.'),
+                l = d + (Math.floor((d - 1) / 3)),
+                c = [];
+	        for (var i = d - 1, j = 1, k = l; i >= 0; i--, j++, k--) {
+	            c[k] = val[i];
+	            if (!(j % 3) && j != d) {
+	                c[--k] = ',';
+	            }
+	        }
+	        var v = c.join('');
+	        v += val.substring(d, val.length);
+	        if (showSign)
+	            v = ''.concat('$', v);
+	        return v;
+	    }
+	    return 'USD Parse Error';
+	};
+
+	var confirm = function (dialogText, okFunc, cancelFunc, dialogTitle) {
+	    $('<div style="padding: 10px; max-width: 500px; word-wrap: break-word;">' + dialogText + '</div>').dialog({
+	        draggable: false,
+	        modal: true,
+	        resizable: false,
+	        width: 'auto',
+	        title: dialogTitle || 'Confirmation',
+	        minHeight: 75,
+	        buttons: {
+	            OK: {
+	                click: function () {
+	                    if (typeof (okFunc) == 'function') {
+	                        setTimeout(okFunc, 50);
+	                    }
+	                    $(this).dialog('destroy');
+	                },
+	                text: 'OK',
+	                'class': 'ColorButton'
+	            },
+	            Cancel: function () {
+	                if (typeof (cancelFunc) == 'function') {
+	                    setTimeout(cancelFunc, 50);
+	                }
+	                $(this).dialog('destroy');
+	            }
+	        }
+	    });
+	};
+
+	var isDateValidation = function (value) {
+	    try {
+	        //Change the below values to determine which format of date you wish to check. It is set to dd/mm/yyyy by default.
+	        value = value.replace(/-/g, "/").replace(/\./g, "/");
+
+	        var DayIndex = 1;
+	        var MonthIndex = 0;
+	        var YearIndex = 2;
+	        var SplitValue = value.split("/");
+	        var OK = true;
+
+	        if (!(SplitValue[DayIndex].length == 1 || SplitValue[DayIndex].length == 2)) {
+	            OK = false;
+	        }
+
+	        if (OK && !(SplitValue[MonthIndex].length == 1 || SplitValue[MonthIndex].length == 2)) {
+	            OK = false;
+	        }
+
+	        if (OK && SplitValue[YearIndex].length != 4) {
+	            OK = false;
+	        }
+
+	        if (OK) {
+	            var Day = parseInt(SplitValue[DayIndex], 10);
+	            var Month = parseInt(SplitValue[MonthIndex], 10);
+	            var Year = parseInt(SplitValue[YearIndex], 10);
+
+	            if (OK = (Month <= 12 && Month > 0)) {
+	                var LeapYear = (((Year % 4) == 0) && ((Year % 100) != 0) || ((Year % 400) == 0));
+
+	                if (Month == 2) {
+	                    OK = LeapYear ? Day <= 29 : Day <= 28;
+	                }
+	                else {
+	                    if ((Month == 4) || (Month == 6) || (Month == 9) || (Month == 11)) {
+	                        OK = (Day > 0 && Day <= 30);
+	                    }
+	                    else {
+	                        OK = (Day > 0 && Day <= 31);
+	                    }
+	                }
+	            }
+	        }
+
+	        return OK;
+	    }
+	    catch (e) {
+	        return false;
+	    }
+	};
+	var initMarketingAds = function () {
+        $("#marketing-ads-container input[type=image]").each(function (i) {
+            var $this = $(this);
+            JHA.NetTeller.ShowTooltip({
+                target: $this,
+                text: $this.attr("title").length > 0 ? $this.attr("title") : $this.attr("oldtitle"),
+                targetPosition: "leftTop",
+                tipPosition: "rightTop",
+                showEvent: "mouseenter",
+                hideEvent: "mouseleave"
+            });
+            $this.removeAttr("title");
+        });
+    };
+    //-----------------------------------------------
+    // Public Members
+    //-----------------------------------------------
+    var public = {
+        InitTheme: initTheme,
+        NavTo: navTo,
+        PlaNavTo: plaNavTo,
+        SessionTimoutSettings: SessionTimoutSettings,
+        SetSessionTimeout: setSessionTimeout,
+        ResetSessionTimeout: resetSessionTimeout,
+        ForceResetSessionTimeout: forceResetSessionTimeout,
+        KeepSessionAlive: keepSessionAlive,
+        SessionTimedOut: sessionTimedOut,
+        IsElementInView: isElementInView,
+        ScrollTo: scrollTo,
+        ShowAlert: showAlert,
+        ShowMessage: showMessage,
+        ShowErrorMessage: showErrorMessage,
+        ShowNetTellerMessage: showNetTellerMessage,
+        ShowNetTellerErrorMessage: showNetTellerErrorMessage,
+        ShowNetTellerInfoMessage: showNetTellerInfoMessage,
+        ShowStartupMessage: showStartupMessage,
+        HideMessages: hideMessages,
+        ShowNetTellerMessage: showNetTellerMessage,
+        ShowNetTellerErrorMessage: showNetTellerErrorMessage,
+        ShowNetTellerInfoMessage: showNetTellerInfoMessage,
+        ShowModal: showModal,
+        ShowHoldsInfoModal: showHoldsInfoModal,
+        ShowInfoModal: showInfoModal,
+        ShowDivModal: showDivModal,
+        CloseAllModals: closeAllModals,
+        ShowTooltip: showTooltip,
+        ShowFieldError: showFieldError,
+        ShowValidation: showValidation,
+        ResetValidation: resetValidation,
+        ShowFieldHelp: showFieldHelp,
+        PrintModal: printModal,
+        Print: print,
+        Print2: print2,
+        GetPemcoPoints: getPemcoPoints,
+        InitJHADatePickers: initJHADatePickers,
+        InitInputHelpText: initInputHelpText,
+        ShowProgressPopup: showProgressPopup,
+        ShowProgressPopupTitle: showProgressPopupTitle,
+        ShowProgressPopupTitleClose: showProgressPopupTitleClose,
+        ShowSpinner: showSpinner,
+        ShowProgressIndicator: showProgressIndicator,
+        DraftSelectAllTran: draftSelectAllTran,
+        DraftViewMultiple: draftViewMultiple,
+        EnableDisableViewChecksButton: enableDisableViewChecksButton,
+        PostToSelectPayments: postToSelectPayments,
+        KeepTrailingZerosOnFocus: keepTrailingZerosOnFocus,
+        FormatToUSD: formatToUSD,
+        Confirm: confirm,
+        IsDateValidation: isDateValidation,
+        InitMarketingAds: initMarketingAds
+};
+
+    return public;
+};

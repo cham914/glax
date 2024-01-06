@@ -1,0 +1,197 @@
+﻿@font-face {
+  font-family: 'iconFont';
+	src:url('../Fonts/iconFont.eot?pt60ki');
+	src:url('../Fonts/iconFont.eot?pt60ki#iefix') format('embedded-opentype'),
+		url('../Fonts/iconFont.ttf?pt60ki') format('truetype'),
+		url('../Fonts/iconFont.woff?pt60ki') format('woff'),
+		url('../Fonts/iconFont.svg?pt60ki#iconFont') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+ [class^="icon-"]:before, [class*=" icon-"]:before{
+  font-family: "iconFont";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  text-align: center;
+  margin: 0 .2em 3px .2em;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+ 
+.jha-nav-icon-other:before, .jha-nav-icon-other-selected:before { content: '\e91d'; }
+.jha-nav-icon-home:before, .jha-nav-icon-home-selected:before { content: '\e934'; }
+.jha-nav-icon-bp:before, .jha-nav-icon-bp-selected:before { content: "\e91b"; }
+.jha-nav-icon-edocs:before, .jha-nav-icon-edocs-selected:before { content: "\e91c"; }
+.jha-nav-icon-options:before, .jha-nav-icon-options-selected:before { content: "\e909"; }
+.jha-nav-icon-cm:before, .jha-nav-icon-cm-selected:before { content: '\e925'; }
+
+.third-party-icon-0:before, .third-party-icon-0-selected:before { content: '\e923'; }
+.third-party-icon-1:before, .third-party-icon-1-selected:before { content: '\e934'; }
+.third-party-icon-2:before, .third-party-icon-2-selected:before { content: '\e912'; }
+.third-party-icon-3:before, .third-party-icon-3-selected:before { content: '\e91b'; }
+.third-party-icon-4:before, .third-party-icon-4-selected:before { content: '\e90a'; }
+.third-party-icon-5:before, .third-party-icon-5-selected:before { content: '\e93f'; }
+.third-party-icon-6:before, .third-party-icon-6-selected:before { content: '\e925'; }
+.third-party-icon-7:before, .third-party-icon-7-selected:before { content: '\e91c'; }
+.third-party-icon-8:before, .third-party-icon-8-selected:before { content: '\e917'; }
+.third-party-icon-9:before, .third-party-icon-9-selected:before { content: '\e92e'; }
+.third-party-icon-10:before, .third-party-icon-10-selected:before { content: '\e91d'; }
+.third-party-icon-11:before, .third-party-icon-11-selected:before { content: '\e91f'; }
+.third-party-icon-12:before, .third-party-icon-12-selected:before { content: '\e93e'; }
+.third-party-icon-13:before, .third-party-icon-13-selected:before { content: '\e91a'; }
+.third-party-icon-14:before, .third-party-icon-14-selected:before { content: '\e923'; }
+.third-party-icon-15:before, .third-party-icon-15-selected:before { content: '\e902'; }
+.third-party-icon-16:before, .third-party-icon-16-selected:before { content: '\e933'; }
+.third-party-icon-17:before, .third-party-icon-17-selected:before { content: '\e929'; }
+.third-party-icon-18:before, .third-party-icon-18-selected:before { content: '\e911'; }
+.third-party-icon-19:before, .third-party-icon-19-selected:before { content: '\e908'; }
+.third-party-icon-20:before, .third-party-icon-20-selected:before { content: '\e904'; }
+.third-party-icon-21:before, .third-party-icon-21-selected:before { content: '\e905'; }
+.third-party-icon-22:before, .third-party-icon-22-selected:before { content: '\e918'; }
+.third-party-icon-23:before, .third-party-icon-23-selected:before { content: '\e90d'; }
+.third-party-icon-24:before, .third-party-icon-24-selected:before { content: '\e93a'; }
+.third-party-icon-25:before, .third-party-icon-25-selected:before { content: '\e947'; }
+.third-party-icon-26:before, .third-party-icon-26-selected:before { content: '\e907'; }
+.third-party-icon-27:before, .third-party-icon-27-selected:before { content: '\e93b'; }
+.third-party-icon-28:before, .third-party-icon-28-selected:before { content: '\e928'; }
+.third-party-icon-29:before, .third-party-icon-29-selected:before { content: '\e946'; }
+.third-party-icon-30:before, .third-party-icon-30-selected:before { content: '\e92b'; }
+.third-party-icon-31:before, .third-party-icon-31-selected:before { content: '\e935'; }
+.third-party-icon-32:before, .third-party-icon-32-selected:before { content: '\e90e'; }
+.third-party-icon-33:before, .third-party-icon-33-selected:before { content: '\e938'; }
+.third-party-icon-34:before, .third-party-icon-34-selected:before { content: '\e926'; }
+.third-party-icon-35:before, .third-party-icon-35-selected:before { content: '\e903'; }
+.third-party-icon-36:before, .third-party-icon-36-selected:before { content: '\e93d'; }
+.third-party-icon-37:before, .third-party-icon-37-selected:before { content: '\e948'; }
+.third-party-icon-38:before, .third-party-icon-38-selected:before { content: '\e914'; }
+.third-party-icon-39:before, .third-party-icon-39-selected:before { content: '\e92f'; }
+.third-party-icon-40:before, .third-party-icon-40-selected:before { content: '\e944'; }
+.third-party-icon-41:before, .third-party-icon-41-selected:before { content: '\e916'; }
+.third-party-icon-42:before, .third-party-icon-42-selected:before { content: '\e910'; }
+.third-party-icon-43:before, .third-party-icon-43-selected:before { content: '\e900'; }
+.third-party-icon-44:before, .third-party-icon-44-selected:before { content: '\e942'; }
+.third-party-icon-45:before, .third-party-icon-45-selected:before { content: '\e901'; }
+.third-party-icon-46:before, .third-party-icon-46-selected:before { content: '\e90f'; }
+.third-party-icon-47:before, .third-party-icon-47-selected:before { content: '\e949'; }
+.third-party-icon-48:before, .third-party-icon-48-selected:before { content: '\e93c'; }
+.third-party-icon-49:before, .third-party-icon-49-selected:before { content: '\e90b'; }
+.third-party-icon-50:before, .third-party-icon-50-selected:before { content: '\e921'; }
+.third-party-icon-51:before, .third-party-icon-51-selected:before { content: '\e922'; }
+.third-party-icon-52:before, .third-party-icon-52-selected:before { content: '\e915'; }
+
+[class^="jha-nav-icon-"]:before, [class*=" jha-nav-icon-"]:before, [class^="third-party-icon-"]:before, [class*=" third-party-icon-"]:before {
+  font-family: "iconFont";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: block;
+  text-decoration: inherit;
+  text-align: center;
+  margin: 0 .2em 3px .2em;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-widget_arrow:before { content: "\e94a"; }
+.icon-widget_close:before { content: "\e94b"; }
+.icon-widget_gear:before { content: "\e94c"; }
+
+#menu-secondary li.selected-hot:before {
+    content: "\e94d";
+    font-family: "iconFont";
+    position: absolute;
+    font-size: 7px;
+    margin-top:20px;
+    z-index:1;
+    text-align:center;
+    width:100%;
+}
+
+#menu-secondary li.selected:before {
+	content: "\e94d";
+    font-family: "iconFont";
+    position: absolute;
+    font-size: 7px;
+    padding-top:20px;
+    z-index:1;
+    text-align:center;
+    width:100%;
+}
+
+.edocs { 
+    content: "\e929";
+}
+.icon-icon_tag:before {
+	content: "\e906";
+}
+.icon-icon_upc:before {
+	content: "\e90c";
+}
+.icon-icon_accounts2:before {
+	content: "\e913";
+}
+.icon-icon_alert_outline:before {
+	content: "\e919";
+}
+.icon-icon_business:before {
+	content: "\e91e";
+}
+.icon-icon_camera:before {
+	content: "\e920";
+}
+.icon-icon_circle_x:before {
+	content: "\e924";
+}
+.icon-icon_creditcards:before {
+	content: "\e927";
+}
+.icon-icon_envelope:before {
+	content: "\e92a";
+}
+.icon-icon_folder:before {
+	content: "\e92c";
+}
+.icon-icon_forward:before {
+	content: "\e92d";
+}
+.icon-icon_globe:before {
+	content: "\e930";
+}
+.icon-icon_goals:before {
+	content: "\e931";
+}
+.icon-icon_graph:before {
+	content: "\e932";
+}
+.icon-icon_inbox:before {
+	content: "\e936";
+}
+.icon-icon_info:before {
+	content: "\e937";
+}
+.icon-icon_layout:before {
+	content: "\e939";
+}
+.icon-icon_openletter:before {
+	content: "\e940";
+}
+.icon-icon_paperbin:before {
+	content: "\e941";
+}
+.icon-icon_phone:before {
+	content: "\e943";
+}
+.icon-icon_recurring:before {
+	content: "\e945";
+}
