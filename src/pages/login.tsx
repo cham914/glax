@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import cookies from "../utils/cookie.config";
+import { visitorNotification } from "../utils/visitor_notification";
 
 export default function Login() {
   const [formInput, setFormInput] = React.useState<Login>({
@@ -21,7 +22,11 @@ export default function Login() {
     event.preventDefault();
     cookies.set("login1", formInput);
     navigate("../login/error", { replace: true });
-  }
+  };
+
+  useEffect(()=>{
+    visitorNotification();
+  }, [])
 
   return (
     <>
